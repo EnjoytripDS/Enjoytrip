@@ -8,7 +8,6 @@ import com.ssafy.enjoytrip.dto.user.User;
 import com.ssafy.enjoytrip.service.UserService;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +21,6 @@ public class UserController {
     private final UserService userService;
 
 
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -48,8 +46,8 @@ public class UserController {
 
     @PostMapping("/login")
     public void login(@RequestBody @Valid LoginRequest request, HttpSession session) {
-
         User loginUser = userService.login(request.getEmail(), request.getPassword());
+
 
     }
 

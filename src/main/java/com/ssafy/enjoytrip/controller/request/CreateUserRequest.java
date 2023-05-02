@@ -19,11 +19,11 @@ public class CreateUserRequest {
     @Pattern(regexp = "^[0-9a-z].{6,10}$", message = "영문 소문자, 숫자 6~10자 이내로 입력하세요.”")
     private String password;
 
-    @NotBlank(message = "이름은 필수 입력사항입니다.")
-    private String name;
+    @NotBlank(message = "닉네임은 필수 입력사항입니다.")
+    private String nickname;
 
 
     public User toDto() {
-        return new User(email, password, name);
+        return new User(email, password, nickname);
     }
 }
