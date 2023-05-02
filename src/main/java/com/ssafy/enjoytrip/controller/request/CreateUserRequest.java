@@ -4,8 +4,12 @@ import com.ssafy.enjoytrip.dto.user.User;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public class UserCreateRequest {
+@NoArgsConstructor
+@Getter
+public class CreateUserRequest {
 
     @NotBlank(message = "이메일은 필수 입력사항입니다.")
     @Email(message = "이메일 형식을 맞춰주세요.")

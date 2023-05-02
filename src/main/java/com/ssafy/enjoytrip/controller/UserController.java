@@ -1,6 +1,6 @@
 package com.ssafy.enjoytrip.controller;
 
-import com.ssafy.enjoytrip.controller.request.UserCreateRequest;
+import com.ssafy.enjoytrip.controller.request.CreateUserRequest;
 import com.ssafy.enjoytrip.service.UserService;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> signUp(@RequestBody @Valid UserCreateRequest request) {
+    public ResponseEntity<Void> signUp(@RequestBody @Valid CreateUserRequest request) {
         userService.signup(request.toDto());
         return ResponseEntity.ok().body(null);
 
