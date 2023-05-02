@@ -1,6 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-</beans>
+<mapper namespace="com.ssafy.enjoytrip.mapper.UserMapper">
+  <resultMap type="User" id="userMap">
+    <result column="user_id" property="id"/>
+    <result column="user_email" property="email"/>
+    <result column="user_password" property="password"/>
+    <result column="user_nickname" property="nickname"/>
+    <result column="user_role" property="role"/>
+    <result column="user_createtime" property="createtime"/>
+    <result column="user_updatetime" property="updatetime"/>
+  </resultMap>
+  <insert id="insertUser" parameterMap="userMap">
+    INSERT INTO user (user_email, user_password, user_nickname, user_role, user_createtime, user_updatetime)
+    VALUES (#{email}, #{password}, #{nickname}, #{role}, #{createtime}, #{updatetime});
+
+  </insert>
+</mapper>

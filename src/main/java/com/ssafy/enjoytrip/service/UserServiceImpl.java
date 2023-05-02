@@ -4,6 +4,7 @@ import com.ssafy.enjoytrip.dto.user.User;
 import com.ssafy.enjoytrip.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.exception.UserDuplicatedNicknameException;
 import com.ssafy.enjoytrip.mapper.UserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,14 +13,26 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
+    @Autowired
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
 
 
     @Override
-    public User login(String id, String password) {
+    public User login(String email, String password) {
+        User user = userMapper.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException();
+        }
+        if (!passwordCheck(user, password)) {
+            throw new RuntimeException();
+        }
         return null;
+    }
+
+    private boolean passwordCheck(User user, String password) {
+        return true;
     }
 
     @Transactional
