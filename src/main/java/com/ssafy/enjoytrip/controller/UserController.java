@@ -1,12 +1,14 @@
 package com.ssafy.enjoytrip.controller;
 
 import com.ssafy.enjoytrip.controller.request.CreateUserRequest;
+import com.ssafy.enjoytrip.controller.request.UserEmailRequest;
 import com.ssafy.enjoytrip.service.UserService;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/v1/user")
@@ -26,5 +28,13 @@ public class UserController {
         return ResponseEntity.ok().body(null);
 
     }
+
+    @PostMapping("/check/email")
+    public ResponseEntity<Void> checkEmail(@RequestBody @Valid UserEmailRequest request) {
+        userService.checkDupEmail(request.getEmail());
+        return ResponseEntity.ok().body(null);
+    }
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.service;
 
 import com.ssafy.enjoytrip.dto.user.User;
+import com.ssafy.enjoytrip.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,5 +36,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int deleteById(int id) {
         return 0;
+    }
+
+    @Override
+    public void checkDupEmail(String email) {
+        int dupCnt = userMapper.existsByEmail(email);
+        if(dupCnt>0) throw new UserDuplicatedEmailException();
     }
 }
