@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.controller;
 
 import com.ssafy.enjoytrip.controller.request.CreateUserRequest;
 import com.ssafy.enjoytrip.controller.request.UserEmailRequest;
+import com.ssafy.enjoytrip.controller.request.UserNicknameRequest;
 import com.ssafy.enjoytrip.service.UserService;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,11 @@ public class UserController {
         return ResponseEntity.ok().body(null);
     }
 
+    @PostMapping("/check/nickname")
+    public ResponseEntity<Void> checkNickname(@RequestBody @Valid UserNicknameRequest request) {
+        userService.checkDupNickname(request.getNickname());
+        return ResponseEntity.ok().body(null);
+    }
 
 
 }

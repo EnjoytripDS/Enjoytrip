@@ -2,12 +2,14 @@ package com.ssafy.enjoytrip.service;
 
 import com.ssafy.enjoytrip.dto.user.User;
 import com.ssafy.enjoytrip.exception.UserDuplicatedEmailException;
+import com.ssafy.enjoytrip.exception.UserDuplicatedNicknameException;
 import com.ssafy.enjoytrip.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     private final UserMapper userMapper;
 
     public UserServiceImpl(UserMapper userMapper) {
@@ -41,6 +43,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void checkDupEmail(String email) {
         int dupCnt = userMapper.existsByEmail(email);
-        if(dupCnt>0) throw new UserDuplicatedEmailException();
+        if (dupCnt > 0) {
+            throw new UserDuplicatedEmailException();
+        }
+    }
+
+    @Override
+    public void checkDupNickname(String nickname) {
+        int dupCnt = userMapper.existsByNickname(nickname);
+        if (dupCnt > 0) {
+            throw new UserDuplicatedNicknameException();
+        }
     }
 }

@@ -15,4 +15,5 @@ public interface UserService {
 
     void checkDupEmail(String email);
 
+    void checkDupNickname(String nickname);
 }

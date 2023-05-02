@@ -9,4 +9,6 @@ public interface UserMapper {
     void insertUser(User user);
 
     int existsByEmail(String email);
+
+    int existsByNickname(String nickname);
 }
