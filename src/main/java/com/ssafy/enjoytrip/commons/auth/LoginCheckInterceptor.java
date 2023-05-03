@@ -13,7 +13,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
             Object handler) throws Exception {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("loginUser")==null) {
+        if (session == null || session.getAttribute("loginUser") == null) {
             log.info("로그인 미인증 유저");
             return false;
         }

@@ -31,7 +31,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<String> signUp(@RequestBody @Valid CreateUserRequest request) {
-        log.info("컨트롤러");
         userService.signup(request.toDto());
         return ResponseEntity.ok().body("회원가입 완료");
 

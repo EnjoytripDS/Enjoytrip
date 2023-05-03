@@ -42,10 +42,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void signup(User user) {
-        log.info("서비스");
         checkDupEmail(user.getEmail());
         checkDupNickname(user.getNickname());
-        log.info("체크 완료");
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         userDao.insert(user);
