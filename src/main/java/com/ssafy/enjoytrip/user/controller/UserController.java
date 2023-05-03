@@ -63,19 +63,12 @@ public class UserController {
         return new ResponseEntity<>(userService.findMyPage(userId), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Integer> modifyUserInfo(@PathVariable("id") int userId,
-            @RequestBody ModifyUserRequest request) {
-        User existingUser = userService.findMyPage(userId);
-        
-        return new ResponseEntity<>(userService.modify(userId, request.toDto()), HttpStatus.OK);
-    }
-
     @PutMapping("/{id}")
-    public int modify(@PathVariable("id") int userId, @RequestBody ModifyUserRequest request) {
-        User user = request.toDto();
-        user.setId(userId);
-        return userService.modify(user);
+    public int modifyUserInfo(@PathVariable("id") int userId,
+            @RequestBody ModifyUserRequest request) {
+        User userInfo = request.toDto();
+        userInfo.setId(userId);
+        return userService.modify(userInfo);
     }
 
 
