@@ -1,11 +1,12 @@
 package com.ssafy.enjoytrip.user.controller;
 
-import com.ssafy.enjoytrip.legacy.controller.request.CreateUserRequest;
-import com.ssafy.enjoytrip.legacy.controller.request.LoginRequest;
-import com.ssafy.enjoytrip.legacy.controller.request.UserEmailRequest;
-import com.ssafy.enjoytrip.legacy.controller.request.UserNicknameRequest;
-import com.ssafy.enjoytrip.legacy.dto.user.User;
-import com.ssafy.enjoytrip.legacy.service.UserService;
+
+import com.ssafy.enjoytrip.user.dto.User;
+import com.ssafy.enjoytrip.user.dto.request.CreateUserRequest;
+import com.ssafy.enjoytrip.user.dto.request.LoginRequest;
+import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
+import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
+import com.ssafy.enjoytrip.user.service.UserService;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;

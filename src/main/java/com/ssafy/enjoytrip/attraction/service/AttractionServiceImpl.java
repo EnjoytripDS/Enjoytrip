@@ -1,20 +1,20 @@
 package com.ssafy.enjoytrip.attraction.service;
 
-import com.ssafy.enjoytrip.legacy.mapper.SearchAttractionMapper;
+import com.ssafy.enjoytrip.attraction.dao.AttractionDao;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AttractionServiceImpl implements AttractionService {
 
-    private final SearchAttractionMapper searchAttractionMapper;
+    private final AttractionDao attractionDao;
 
-    public AttractionServiceImpl(SearchAttractionMapper searchAttractionMapper) {
-        this.searchAttractionMapper = searchAttractionMapper;
+    public AttractionServiceImpl(AttractionDao attractionDao) {
+        this.attractionDao = attractionDao;
     }
 
     @Override
     public List<String> getGugun(int sidoCode) {
-        return searchAttractionMapper.getGugun(sidoCode);
+        return attractionDao.getGugun(sidoCode);
     }
 }

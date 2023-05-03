@@ -1,25 +1,24 @@
 package com.ssafy.enjoytrip.user.service;
 
-import com.ssafy.enjoytrip.legacy.dto.user.User;
-import com.ssafy.enjoytrip.legacy.exception.UserDuplicatedEmailException;
-import com.ssafy.enjoytrip.legacy.exception.UserDuplicatedNicknameException;
-import com.ssafy.enjoytrip.legacy.mapper.UserMapper;
+import com.ssafy.enjoytrip.user.dao.UserDao;
+import com.ssafy.enjoytrip.user.dto.User;
+import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
+import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserMapper userMapper;
+    private final UserDao userDao;
 
-    public UserServiceImpl(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
-
 
     @Override
     public User login(String email, String password) {
-        User user = userMapper.findByEmail(email);
+        User user = userDao.findByEmail(email);
         if (user == null) {
             throw new RuntimeException();
         }
@@ -36,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void signup(User user) {
-        userMapper.insertUser(user);
+        userDao.insertUser(user);
     }
 
     @Transactional
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkDupEmail(String email) {
-        int dupCnt = userMapper.existsByEmail(email);
+        int dupCnt = userDao.existsByEmail(email);
         if (dupCnt > 0) {
             throw new UserDuplicatedEmailException();
         }
@@ -61,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkDupNickname(String nickname) {
-        int dupCnt = userMapper.existsByNickname(nickname);
+        int dupCnt = userDao.existsByNickname(nickname);
         if (dupCnt > 0) {
             throw new UserDuplicatedNicknameException();
         }

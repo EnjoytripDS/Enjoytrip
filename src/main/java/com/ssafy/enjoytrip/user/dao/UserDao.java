@@ -1,6 +1,6 @@
 package com.ssafy.enjoytrip.user.dao;
 
-import com.ssafy.enjoytrip.legacy.dto.user.User;
+import com.ssafy.enjoytrip.user.dto.User;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

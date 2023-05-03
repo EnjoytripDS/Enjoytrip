@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.user.service;
 
-import com.ssafy.enjoytrip.legacy.dto.user.User;
+
+import com.ssafy.enjoytrip.user.dto.User;
 
 public interface UserService {
 
