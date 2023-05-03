@@ -13,4 +13,7 @@ public interface UserService {
     int deleteById(int id);
 
 
+    void checkDupEmail(String email);
+
+    void checkDupNickname(String nickname);
 }
