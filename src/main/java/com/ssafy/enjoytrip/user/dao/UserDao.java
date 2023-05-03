@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserDao {
 
-    void insertUser(User user);
+    void insert(User user);
 
     int existsByEmail(String email);
 
@@ -15,5 +15,6 @@ public interface UserDao {
     User findByEmail(String email);
 
     User findById(int id);
+
     int update(int userId, User user);
 }

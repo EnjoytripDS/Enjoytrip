@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void signup(User user) {
-        userDao.insertUser(user);
+        userDao.insert(user);
     }
 
     @Transactional
