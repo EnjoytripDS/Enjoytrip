@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
         if (!passwordCheck(user, password)) {
             throw new RuntimeException();
         }
-        return null;
+        return user;
     }
 
     private boolean passwordCheck(User user, String password) {
@@ -40,8 +40,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public int modify(User user) {
-        return 0;
+    public int modify(int userId, User userinfo) {
+        // 비밀번호 확인
+        if(!passwordCheck(userinfo, userinfo.getPassword())) throw new RuntimeException();
+        return userDao.update(userId, userinfo);
     }
 
     @Transactional
@@ -65,4 +67,11 @@ public class UserServiceImpl implements UserService {
             throw new UserDuplicatedNicknameException();
         }
     }
+
+    @Override
+    public User findMyPage(int id) {
+        return userDao.findById(id);
+    }
+
+
 }

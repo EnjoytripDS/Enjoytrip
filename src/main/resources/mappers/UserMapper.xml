@@ -16,4 +16,12 @@
     VALUES (#{email}, #{password}, #{nickname}, #{createtime}, #{updatetime});
 
   </insert>
+
+  <select id="findById" parameterType="int" resultMap="userMap">
+    SELECT user_id, user_email, user_password, user_nickname, user_createtime, user_updatetime
+    FROM user
+    WHERE user_id = #{id}
+  </select>
+
+
 </mapper>

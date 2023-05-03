@@ -4,12 +4,17 @@ package com.ssafy.enjoytrip.user.controller;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.dto.request.CreateUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.LoginRequest;
+import com.ssafy.enjoytrip.user.dto.request.ModifyUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
 import com.ssafy.enjoytrip.user.service.UserService;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,5 +57,15 @@ public class UserController {
 
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<User> checkMyPage(@PathVariable("id") int userId) {
+        return new ResponseEntity<User>(userService.findMyPage(userId), HttpStatus.OK);
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Void> modifyUserInfo(@PathVariable("id") int userId, @RequestBody ModifyUserRequest request) {
+        userService.modify(userId, request.toDto());
+        return null;
+    }
 
 }

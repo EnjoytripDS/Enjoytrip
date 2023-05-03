@@ -9,7 +9,7 @@ public interface UserService {
 
     void signup(User user);
 
-    int modify(User user);
+    int modify(int userId, User user);
 
     int deleteById(int id);
 
@@ -17,4 +17,6 @@ public interface UserService {
     void checkDupEmail(String email);
 
     void checkDupNickname(String nickname);
+
+    User findMyPage(int id);
 }
