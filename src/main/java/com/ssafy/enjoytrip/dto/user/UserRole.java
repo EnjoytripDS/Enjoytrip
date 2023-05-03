@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.dto.user;
 
-public enum UserStatus {
+public enum UserRole {
     ADMIN,
-    COMMON
+    COMMON;
+
 }
