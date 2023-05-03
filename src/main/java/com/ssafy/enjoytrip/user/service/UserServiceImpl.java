@@ -49,6 +49,11 @@ public class UserServiceImpl implements UserService {
         return userDao.update(userinfo);
     }
 
+    @Override
+    public int modify(User user) {
+        return userDao.update(user);
+    }
+
     @Transactional
     @Override
     public int deleteById(int id) {

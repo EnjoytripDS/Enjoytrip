@@ -24,7 +24,7 @@
 
   <update id="update" parameterType="User">
     UPDATE user
-    SET user_email = #{email}, user_nickname = #{nickname}
+    SET user_email = #{email}, user_nickname = #{nickname}, user_password = #{password}, user_updatetime = now()
     WHERE user_id = #{id}
   </update>
 
