@@ -42,8 +42,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int modify(int userId, User userinfo) {
         // 비밀번호 확인
-        if(!passwordCheck(userinfo, userinfo.getPassword())) throw new RuntimeException();
-        return userDao.update(userId, userinfo);
+        if (!passwordCheck(userinfo, userinfo.getPassword())) {
+            throw new RuntimeException();
+        }
+        userinfo.setId(userId);
+        return userDao.update(userinfo);
     }
 
     @Transactional

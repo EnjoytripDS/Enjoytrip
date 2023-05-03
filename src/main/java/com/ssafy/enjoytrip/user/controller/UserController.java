@@ -59,13 +59,16 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> checkMyPage(@PathVariable("id") int userId) {
-        return new ResponseEntity<User>(userService.findMyPage(userId), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findMyPage(userId), HttpStatus.OK);
     }
 
-    @PatchMapping("/")
-    public ResponseEntity<Void> modifyUserInfo(@PathVariable("id") int userId, @RequestBody ModifyUserRequest request) {
-        userService.modify(userId, request.toDto());
-        return null;
+    @PatchMapping("/{id}")
+    public ResponseEntity<Integer> modifyUserInfo(@PathVariable("id") int userId,
+            @RequestBody ModifyUserRequest request) {
+        User existingUser = userService.findMyPage(userId);
+        
+        return new ResponseEntity<>(userService.modify(userId, request.toDto()), HttpStatus.OK);
     }
+
 
 }

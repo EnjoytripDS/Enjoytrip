@@ -16,5 +16,5 @@ public interface UserDao {
 
     User findById(int id);
 
-    int update(int userId, User user);
+    int update(User user);
 }
