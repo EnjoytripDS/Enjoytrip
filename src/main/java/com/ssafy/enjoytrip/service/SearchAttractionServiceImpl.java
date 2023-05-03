@@ -16,6 +16,6 @@ public class SearchAttractionServiceImpl implements SearchAttractionService {
 
     @Override
     public List<String> getGugun(int sidoCode) {
-        return getGugun(sidoCode);
+        return searchAttractionMapper.getGugun(sidoCode);
     }
 }
