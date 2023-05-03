@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.board.travelreview.controller;
+package com.ssafy.enjoytrip.travelreview.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

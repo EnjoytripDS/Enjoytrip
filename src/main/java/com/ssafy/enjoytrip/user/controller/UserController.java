@@ -27,22 +27,22 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> signUp(@RequestBody @Valid CreateUserRequest request) {
+    public ResponseEntity<String> signUp(@RequestBody @Valid CreateUserRequest request) {
         userService.signup(request.toDto());
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body("회원가입 완료");
 
     }
 
     @PostMapping("/check/email")
-    public ResponseEntity<Void> checkEmail(@RequestBody @Valid UserEmailRequest request) {
+    public ResponseEntity<String> checkEmail(@RequestBody @Valid UserEmailRequest request) {
         userService.checkDupEmail(request.getEmail());
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body("이메일 중복 체크 완료");
     }
 
     @PostMapping("/check/nickname")
-    public ResponseEntity<Void> checkNickname(@RequestBody @Valid UserNicknameRequest request) {
+    public ResponseEntity<String> checkNickname(@RequestBody @Valid UserNicknameRequest request) {
         userService.checkDupNickname(request.getNickname());
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body("닉네임 중복 체크 완료");
     }
 
     @PostMapping("/login")

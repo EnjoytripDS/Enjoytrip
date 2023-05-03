@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.board.travelreview.dto;
+package com.ssafy.enjoytrip.travelreview.dto;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
