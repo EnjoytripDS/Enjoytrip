@@ -22,7 +22,6 @@ public class SearchAttractionController {
     @GetMapping("/{sidoCode}")
     public ResponseEntity<List<String>> getGugun(@PathVariable("sidoCode") int sidoCode) {
         List<String> gugunList = searchAttractionService.getGugun(sidoCode);
-
         return new ResponseEntity<List<String>>(gugunList, HttpStatus.OK);
     }
 }
