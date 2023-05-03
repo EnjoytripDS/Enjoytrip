@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.session.StandardSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,10 +49,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest request, HttpSession session) {
+    public ResponseEntity<String> login(
+            @RequestBody @Valid LoginRequest request,
+            HttpSession session
+    ) {
         User loginUser = userService.login(request.getEmail(), request.getPassword());
         session.setAttribute("loginUser", loginUser);
-        return ResponseEntity.ok().body("로그인 완료");
+        return ResponseEntity.ok().body(session.getId());
     }
 
     @PostMapping("/logout")
@@ -62,6 +64,5 @@ public class UserController {
         session.invalidate();
         return ResponseEntity.ok().body("로그아웃 완료");
     }
-
 
 }
