@@ -22,13 +22,6 @@
     <result column="mlevel" property="mlevel"/>
   </resultMap>
 
-  <resultMap type="SearchCondition" id="searchConditionMap">
-    <result column="sido_code" property="sidoCode"/>
-    <result column="gugun_code" property="gugunCode"/>
-    <result column="content_type_id" property="contentTypeId"/>
-    <result column="keyword" property="keyword"/>
-  </resultMap>
-
   <select id="getGugun" parameterType="int" resultType="string">
     select gugun_name
     from gugun
