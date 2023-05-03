@@ -21,4 +21,16 @@
     from user
     where user_email = #{email};
   </select>
+
+  <select id="existsByEmail" parameterType="string" resultType="int">
+    select count(*)
+    from user
+    where user_email = #{email};
+  </select>
+
+  <select id="existsByNickname" parameterType="string" resultType="int">
+    select count(*)
+    from user
+    where user_nickname = #{nickname};
+  </select>
 </mapper>
