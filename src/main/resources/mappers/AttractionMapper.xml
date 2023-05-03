@@ -22,16 +22,33 @@
     <result column="mlevel" property="mlevel"/>
   </resultMap>
 
+  <resultMap type="SearchCondition" id="searchConditionMap">
+    <result column="sido_code" property="sidoCode"/>
+    <result column="gugun_code" property="gugunCode"/>
+    <result column="content_type_id" property="contentTypeId"/>
+    <result column="keyword" property="keyword"/>
+  </resultMap>
+
   <select id="getGugun" parameterType="int" resultType="string">
     select gugun_name
     from gugun
     where sido_code = #{sidoCode}
   </select>
 
-  <select id="selectAllByCondition" resultMap="attractionMap" parameterMap="SearchCondition">
-    select *
+  <!-- 검색 기능 -->
+  <select id="selectAllByCondition" resultMap="attractionMap" parameterType="SearchCondition">
+    select content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, first_image2, readcount, sido_code, gugun_code, latitude, longitude, mlevel
     from attraction_info
-
-
+    where title like concat('%', #{keyword}, '%')
+    <if test="sidoCode != 0">
+      and sido_code = ${sidoCode}
+    </if>
+    <if test="gugunCode != 0">
+      and gugun_code = ${gugunCode}
+    </if>
+    <if test="contentTypeId != 0">
+      and content_type_id = ${contentTypeId}
+    </if>
   </select>
+
 </mapper>

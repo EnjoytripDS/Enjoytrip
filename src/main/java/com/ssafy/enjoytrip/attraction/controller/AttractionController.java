@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,12 +28,12 @@ public class AttractionController {
         return new ResponseEntity<List<String>>(gugunList, HttpStatus.OK);
     }
 
-    @GetMapping("/{sidoCode}/{gugunCode}/{contentTypeId}/{keyword}")
+    @GetMapping
     public ResponseEntity<List<Attraction>> search(
-            @PathVariable("sidoCode") int sidoCode,
-            @PathVariable("gugunCode") int gugunCode,
-            @PathVariable("contentTypeId") int contentTypeId,
-            @PathVariable("keyword") String keyword
+            @RequestParam("sidoCode") int sidoCode,
+            @RequestParam("gugunCode") int gugunCode,
+            @RequestParam("contentTypeId") int contentTypeId,
+            @RequestParam("keyword") String keyword
     ) {
         List<Attraction> attractionList = attractionService.search(
                 new SearchCondition(
