@@ -2,37 +2,41 @@ package com.ssafy.enjoytrip.user.service;
 
 import com.ssafy.enjoytrip.user.dao.UserDao;
 import com.ssafy.enjoytrip.user.dto.User;
-import com.ssafy.enjoytrip.user.exception.PasswordFailException;
 import com.ssafy.enjoytrip.user.exception.InvalidPasswordException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
+import com.ssafy.enjoytrip.user.exception.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User login(String email, String password) {
-        User user = userDao.findByEmail(email);
+        User user = userDao.selectOneByEmail(email);
         if (user == null) {
-            throw new RuntimeException();
+            throw new UserNotFoundException();
         }
-        if (!passwordCheck(user, password)) {
-            throw new RuntimeException();
+        if (!passwordCheck(password, user.getPassword())) {
+            throw new InvalidPasswordException();
         }
         return user;
     }
 
-    private boolean passwordCheck(User user, String password) {
-        return true;
+    private boolean passwordCheck(String rawPassword, String password) {
+        return passwordEncoder.matches(rawPassword, password);
     }
 
     @Transactional
@@ -48,9 +52,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public int modify(User userInfo) {
+        log.info("userid: ", userInfo.getId());
+        String originalPassword = userDao.findById(userInfo.getId()).getPassword();
+        log.info("originalPassword: ", originalPassword);
         // 비밀번호 확인
-        if (!passwordCheck(userInfo, userInfo.getPassword())) {
-            throw new PasswordFailException();
+        if (!passwordCheck(userInfo.getPassword(), originalPassword)) {
+            throw new InvalidPasswordException();
         }
         return userDao.update(userInfo);
     }
