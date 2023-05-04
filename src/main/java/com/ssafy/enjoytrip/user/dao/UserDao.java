@@ -12,5 +12,11 @@ public interface UserDao {
 
     int existsByNickname(String nickname);
 
+    User findById(int id);
+
+    int update(User user);
+
+    int deleteById(int id);
+
     User selectOneByEmail(String email);
 }

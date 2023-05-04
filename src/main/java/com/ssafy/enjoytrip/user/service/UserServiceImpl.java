@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.user.service;
 import com.ssafy.enjoytrip.user.dao.UserDao;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.exception.InvalidPasswordException;
+import com.ssafy.enjoytrip.user.exception.PasswordFailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
 import com.ssafy.enjoytrip.user.exception.UserNotFoundException;
@@ -51,15 +52,20 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public int modify(User user) {
-        return 0;
+    public int modify(User userInfo) {
+        // 비밀번호 확인
+        if (!passwordCheck(userInfo, userInfo.getPassword())) {
+            throw new PasswordFailException();
+        }
+        return userDao.update(userInfo);
     }
 
     @Transactional
     @Override
     public int deleteById(int id) {
-        return 0;
+        return userDao.deleteById(id);
     }
+
 
     @Override
     public void checkDupEmail(String email) {
@@ -76,4 +82,10 @@ public class UserServiceImpl implements UserService {
             throw new UserDuplicatedNicknameException();
         }
     }
+
+    @Override
+    public User findMyPage(int id) {
+        return userDao.findById(id);
+    }
+
 }

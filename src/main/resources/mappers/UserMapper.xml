@@ -17,6 +17,25 @@
     INSERT INTO user (user_email, user_password, user_nickname, user_createtime, user_updatetime)
     VALUES (#{email}, #{password}, #{nickname}, #{createtime}, #{updatetime});
   </insert>
+
+  <select id="findById" parameterType="int" resultMap="userMap">
+    SELECT user_id, user_email, user_password, user_nickname, user_createtime, user_updatetime
+    FROM user
+    WHERE user_id = #{id}
+  </select>
+
+  <update id="update" parameterType="User">
+    UPDATE user
+    SET user_email = #{email}, user_nickname = #{nickname}, user_password = #{password},
+    user_updatetime = now()
+    WHERE user_id = #{id}
+  </update>
+
+  <delete id="deleteById" parameterType="int">
+    DELETE FROM user
+    WHERE user_id = #{id}
+  </delete>
+
   <select id="selectOneByEmail" parameterType="string" resultMap="userMap">
     select user_id, user_email, user_password, user_nickname
     from user
