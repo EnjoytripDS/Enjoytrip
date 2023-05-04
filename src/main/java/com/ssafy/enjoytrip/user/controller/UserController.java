@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> checkMyPage(@PathVariable("id") int userId) {
+    public ResponseEntity<User> getUserInfo(@PathVariable("id") int userId) {
         return new ResponseEntity<>(userService.findMyPage(userId), HttpStatus.OK);
     }
 
@@ -72,7 +72,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public int deleteUser(@PathVariable("id") int userId) {
+    public int dropOutUser(@PathVariable("id") int userId) {
         return userService.deleteById(userId);
     }
 }

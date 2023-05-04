@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.user.service;
 
 import com.ssafy.enjoytrip.user.dao.UserDao;
 import com.ssafy.enjoytrip.user.dto.User;
+import com.ssafy.enjoytrip.user.exception.PasswordFailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
     public int modify(User userInfo) {
         // 비밀번호 확인
         if (!passwordCheck(userInfo, userInfo.getPassword())) {
-            throw new RuntimeException();
+            throw new PasswordFailException();
         }
         return userDao.update(userInfo);
     }
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public int deleteById(int id) {
-        return userDao.delete(id);
+        return userDao.deleteById(id);
     }
 
     @Override

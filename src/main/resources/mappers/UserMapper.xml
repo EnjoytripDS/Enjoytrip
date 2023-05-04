@@ -29,7 +29,7 @@
     WHERE user_id = #{id}
   </update>
 
-  <delete id="delete" parameterType="int">
+  <delete id="deleteById" parameterType="int">
     DELETE FROM user
     WHERE user_id = #{id}
   </delete>
