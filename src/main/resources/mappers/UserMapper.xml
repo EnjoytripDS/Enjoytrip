@@ -26,8 +26,7 @@
 
   <update id="update" parameterType="User">
     UPDATE user
-    SET user_email = #{email}, user_nickname = #{nickname}, user_password = #{password},
-    user_updatetime = now()
+    SET user_email = #{email}, user_nickname = #{nickname}, user_updatetime = now()
     WHERE user_id = #{id}
   </update>
 
@@ -36,7 +35,7 @@
     WHERE user_id = #{id}
   </delete>
 
-  <select id="selectOneByEmail" parameterType="string" resultMap="userMap">
+  <select id="findByEmail" parameterType="string" resultMap="userMap">
     select user_id, user_email, user_password, user_nickname
     from user
     where user_email = #{email};

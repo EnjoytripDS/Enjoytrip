@@ -66,7 +66,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserInfo(@PathVariable("id") int userId) {
-        return new ResponseEntity<>(userService.findMyPage(userId), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserInfo(userId), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -86,6 +86,6 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public int dropOutUser(@PathVariable("id") int userId) {
-        return userService.deleteById(userId);
+        return userService.dropOutById(userId);
     }
 }

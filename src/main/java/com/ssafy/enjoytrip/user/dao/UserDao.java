@@ -18,5 +18,5 @@ public interface UserDao {
 
     int deleteById(int id);
 
-    User selectOneByEmail(String email);
+    User findByEmail(String email);
 }

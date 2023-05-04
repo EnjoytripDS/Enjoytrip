@@ -25,19 +25,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String email, String password) {
-        User user = userDao.selectOneByEmail(email);
+    public User login(String email, String rawPassword) {
+        User user = userDao.findByEmail(email);
         if (user == null) {
             throw new UserNotFoundException();
         }
-        if (!passwordCheck(user, password)) {
+        if (!passwordCheck(rawPassword, user.getPassword())) {
             throw new InvalidPasswordException();
         }
         return user;
     }
 
-    private boolean passwordCheck(User user, String password) {
-        return passwordEncoder.matches(password, user.getPassword());
+    private boolean passwordCheck(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
     @Transactional
@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
         checkDupEmail(user.getEmail());
         checkDupNickname(user.getNickname());
         String encodedPassword = passwordEncoder.encode(user.getPassword());
+        System.out.println(encodedPassword);
         user.setPassword(encodedPassword);
         userDao.insert(user);
     }
@@ -53,16 +54,19 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public int modify(User userInfo) {
-        // 비밀번호 확인
-        if (!passwordCheck(userInfo, userInfo.getPassword())) {
+        // 기존 유저의 비밀번호와 회원정보 수정을 위해 입력한 비밀번호가 일치하는지 확인
+        String originalPassword = userDao.findById(userInfo.getId()).getPassword();
+        // 일치하지 않을 경우, 수정 불가 에러 리턴
+        if (!passwordCheck(userInfo.getPassword(), originalPassword)) {
             throw new PasswordFailException();
         }
+        // 일치할 경우
         return userDao.update(userInfo);
     }
 
     @Transactional
     @Override
-    public int deleteById(int id) {
+    public int dropOutById(int id) {
         return userDao.deleteById(id);
     }
 
@@ -84,7 +88,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findMyPage(int id) {
+    public User getUserInfo(int id) {
         return userDao.findById(id);
     }
 
