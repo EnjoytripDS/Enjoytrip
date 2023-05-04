@@ -2,40 +2,51 @@ package com.ssafy.enjoytrip.user.service;
 
 import com.ssafy.enjoytrip.user.dao.UserDao;
 import com.ssafy.enjoytrip.user.dto.User;
+import com.ssafy.enjoytrip.user.exception.InvalidPasswordException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
+import com.ssafy.enjoytrip.user.exception.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User login(String email, String password) {
-        User user = userDao.findByEmail(email);
+        User user = userDao.selectOneByEmail(email);
         if (user == null) {
-            throw new RuntimeException();
+            throw new UserNotFoundException();
         }
         if (!passwordCheck(user, password)) {
-            throw new RuntimeException();
+            throw new InvalidPasswordException();
         }
-        return null;
+        return user;
     }
 
     private boolean passwordCheck(User user, String password) {
-        return true;
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Transactional
     @Override
     public void signup(User user) {
-        userDao.insertUser(user);
+        checkDupEmail(user.getEmail());
+        checkDupNickname(user.getNickname());
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        userDao.insert(user);
     }
 
     @Transactional

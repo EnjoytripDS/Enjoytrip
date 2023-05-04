@@ -7,14 +7,17 @@ import com.ssafy.enjoytrip.user.dto.request.LoginRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
 import com.ssafy.enjoytrip.user.service.UserService;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
@@ -46,11 +49,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody @Valid LoginRequest request, HttpSession session) {
+    public ResponseEntity<String> login(
+            @RequestBody @Valid LoginRequest request,
+            HttpSession session
+    ) {
         User loginUser = userService.login(request.getEmail(), request.getPassword());
-
-
+        session.setAttribute("loginUser", loginUser);
+        return ResponseEntity.ok().body(session.getId());
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.invalidate();
+        return ResponseEntity.ok().body("로그아웃 완료");
+    }
 
 }
