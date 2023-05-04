@@ -8,9 +8,11 @@ import com.ssafy.enjoytrip.user.dto.request.ModifyUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
 import com.ssafy.enjoytrip.user.service.UserService;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,6 +71,13 @@ public class UserController {
         User userInfo = request.toDto();
         userInfo.setId(userId);
         return userService.modify(userInfo);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.invalidate();
+        return ResponseEntity.ok().body("로그아웃 완료");
     }
 
     @DeleteMapping("/{id}")

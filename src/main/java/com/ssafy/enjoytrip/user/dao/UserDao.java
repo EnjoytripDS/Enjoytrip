@@ -19,4 +19,6 @@ public interface UserDao {
     int update(User user);
 
     int deleteById(int id);
+
+    User selectOneByEmail(String email);
 }

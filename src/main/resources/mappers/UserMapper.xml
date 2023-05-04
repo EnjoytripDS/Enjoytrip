@@ -11,6 +11,7 @@
     <result column="user_createtime" property="createtime"/>
     <result column="user_updatetime" property="updatetime"/>
   </resultMap>
+
   <insert id="insert" parameterType="User">
     INSERT INTO user (user_email, user_password, user_nickname, user_createtime, user_updatetime)
     VALUES (#{email}, #{password}, #{nickname}, #{createtime}, #{updatetime});
@@ -33,4 +34,22 @@
     DELETE FROM user
     WHERE user_id = #{id}
   </delete>
+
+  <select id="selectOneByEmail" parameterType="string" resultMap="userMap">
+    select user_id, user_email, user_password, user_nickname
+    from user
+    where user_email = #{email};
+  </select>
+
+  <select id="existsByEmail" parameterType="string" resultType="int">
+    select count(*)
+    from user
+    where user_email = #{email};
+  </select>
+
+  <select id="existsByNickname" parameterType="string" resultType="int">
+    select count(*)
+    from user
+    where user_nickname = #{nickname};
+  </select>
 </mapper>

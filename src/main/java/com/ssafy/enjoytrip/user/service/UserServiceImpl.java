@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.user.service;
 import com.ssafy.enjoytrip.user.dao.UserDao;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.exception.PasswordFailException;
+import com.ssafy.enjoytrip.user.exception.InvalidPasswordException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
@@ -36,6 +38,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void signup(User user) {
+        checkDupEmail(user.getEmail());
+        checkDupNickname(user.getNickname());
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         userDao.insert(user);
     }
 
