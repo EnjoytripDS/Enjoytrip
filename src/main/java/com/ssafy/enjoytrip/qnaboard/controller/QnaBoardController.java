@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/qna-board")
 public class QnaBoardController {
 
-    // TODO response 공통화
     private static final String SUCCESS = "succes";
     private static final String FAIL = "fail";
 
