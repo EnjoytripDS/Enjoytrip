@@ -1,6 +1,5 @@
 package com.ssafy.enjoytrip.user.dto;
 
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,8 +17,8 @@ public class User {
     private String password;
     private String nickname;
     private UserRole role;
-    private LocalDateTime createtime;
-    private LocalDateTime updatetime;
+    private String createtime;
+    private String updatetime;
 
 
     public User(String email, String password, String nickname) {
@@ -27,7 +26,5 @@ public class User {
         this.email = email;
         this.nickname = nickname;
         this.role = UserRole.COMMON;
-        this.createtime = LocalDateTime.now();
-        this.updatetime = LocalDateTime.now();
     }
 }

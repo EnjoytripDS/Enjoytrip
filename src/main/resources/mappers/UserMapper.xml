@@ -5,51 +5,51 @@
 <mapper namespace="com.ssafy.enjoytrip.user.dao.UserDao">
 
   <resultMap type="User" id="userMap">
-    <result column="user_id" property="id"/>
-    <result column="user_email" property="email"/>
-    <result column="user_password" property="password"/>
-    <result column="user_nickname" property="nickname"/>
-    <result column="user_createtime" property="createtime"/>
-    <result column="user_updatetime" property="updatetime"/>
+    <result column="id" property="id"/>
+    <result column="email" property="email"/>
+    <result column="password" property="password"/>
+    <result column="nickname" property="nickname"/>
+    <result column="createtime" property="createtime"/>
+    <result column="updatetime" property="updatetime"/>
   </resultMap>
 
   <insert id="insert" parameterType="User">
-    INSERT INTO user (user_email, user_password, user_nickname, user_createtime, user_updatetime)
-    VALUES (#{email}, #{password}, #{nickname}, #{createtime}, #{updatetime});
+    INSERT INTO user (email, password, nickname, createtime, updatetime)
+    VALUES (#{email}, #{password}, #{nickname}, now(), now());
   </insert>
 
   <select id="findById" parameterType="int" resultMap="userMap">
-    SELECT user_id, user_email, user_password, user_nickname, user_createtime, user_updatetime
+    SELECT id, email, password, nickname, createtime, updatetime
     FROM user
     WHERE user_id = #{id}
   </select>
 
   <update id="update" parameterType="User">
     UPDATE user
-    SET user_email = #{email}, user_nickname = #{nickname}, user_updatetime = now()
+    SET email = #{email}, nickname = #{nickname}, updatetime = now()
     WHERE user_id = #{id}
   </update>
 
   <delete id="deleteById" parameterType="int">
     DELETE FROM user
-    WHERE user_id = #{id}
+    WHERE id = #{id}
   </delete>
 
   <select id="findByEmail" parameterType="string" resultMap="userMap">
-    select user_id, user_email, user_password, user_nickname
+    select id, email, password, nickname
     from user
-    where user_email = #{email};
+    where email = #{email};
   </select>
 
   <select id="existsByEmail" parameterType="string" resultType="int">
     select count(*)
     from user
-    where user_email = #{email};
+    where email = #{email};
   </select>
 
   <select id="existsByNickname" parameterType="string" resultType="int">
     select count(*)
     from user
-    where user_nickname = #{nickname};
+    where nickname = #{nickname};
   </select>
 </mapper>
