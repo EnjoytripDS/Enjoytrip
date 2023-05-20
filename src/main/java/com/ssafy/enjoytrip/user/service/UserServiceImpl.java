@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
 //            throw new PasswordFailException();
 //        }
 //        // 일치할 경우
+        checkDupNickname(userInfo.getNickname());
         return userDao.update(userInfo);
     }
 
