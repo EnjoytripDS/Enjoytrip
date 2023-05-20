@@ -85,7 +85,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public int dropOutUser(@PathVariable("id") int userId) {
-        return userService.dropOutById(userId);
+    public int dropOutUser(@PathVariable("id") int userId,
+            @RequestBody @Valid String password, HttpServletRequest request) {
+        logout(request);
+        return userService.dropOutById(userId, password);
     }
 }
