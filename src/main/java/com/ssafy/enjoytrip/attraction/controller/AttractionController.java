@@ -46,4 +46,11 @@ public class AttractionController {
         return new ResponseEntity<>(attractionList, HttpStatus.OK);
     }
 
+    @GetMapping("/{attractionId}")
+    public ResponseEntity<List<Attraction>> attractionDetail(
+            @PathVariable("attractionId") int attractionId
+    ) {
+        return new ResponseEntity<>(attractionService.readAttractionDetails(attractionId), HttpStatus.OK);
+    }
+
 }

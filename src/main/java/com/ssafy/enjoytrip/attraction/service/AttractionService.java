@@ -9,4 +9,6 @@ public interface AttractionService {
     List<String> getGugun(int sidoCode);
 
     List<Attraction> search(SearchCondition searchCondition);
+
+    List<Attraction> readAttractionDetails(int attractionId);
 }
