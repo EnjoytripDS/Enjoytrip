@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.attraction.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ public class SearchCondition {
 
     private int sidoCode;
     private int gugunCode;
-    private int contentTypeId;
+    private List<Integer> contentTypeIdList;
     private String keyword;
 
 }

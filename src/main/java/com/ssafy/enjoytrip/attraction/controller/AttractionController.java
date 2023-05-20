@@ -22,7 +22,7 @@ public class AttractionController {
         this.attractionService = attractionService;
     }
 
-    @GetMapping("/{sidoCode}")
+    @GetMapping("/find/gugun/{sidoCode}")
     public ResponseEntity<List<String>> getGugun(@PathVariable("sidoCode") int sidoCode) {
         List<String> gugunList = attractionService.getGugun(sidoCode);
         return new ResponseEntity<List<String>>(gugunList, HttpStatus.OK);
@@ -30,16 +30,16 @@ public class AttractionController {
 
     @GetMapping
     public ResponseEntity<List<Attraction>> search(
-            @RequestParam("sidoCode") int sidoCode,
-            @RequestParam("gugunCode") int gugunCode,
-            @RequestParam("contentTypeId") int contentTypeId,
-            @RequestParam("keyword") String keyword
+            @RequestParam(value = "sidoCode", defaultValue = "0") int sidoCode,
+            @RequestParam(value = "gugunCode",defaultValue = "0") int gugunCode,
+            @RequestParam(value = "contentTypeId", required = false) List<Integer>  contentTypeIdList,
+            @RequestParam(value = "keyword", required = false) String keyword
     ) {
         List<Attraction> attractionList = attractionService.search(
                 new SearchCondition(
                         sidoCode,
                         gugunCode,
-                        contentTypeId,
+                        contentTypeIdList,
                         keyword
                 )
         );
