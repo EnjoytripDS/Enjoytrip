@@ -29,7 +29,7 @@
     SET email      = #{email},
         nickname   = #{nickname},
         updatetime = now()
-    WHERE user_id = #{id}
+    WHERE id = #{id}
   </update>
 
   <delete id="deleteById" parameterType="int">
