@@ -15,7 +15,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     DUPLICATED_EMAIL(HttpStatus.CONFLICT, "중복된 이메일 입니다."),
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임 입니다."),
-    PASSWORD_NOT_MATCHED(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+    PASSWORD_NOT_MATCHED(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    QNA_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 QNA 게시물이 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
