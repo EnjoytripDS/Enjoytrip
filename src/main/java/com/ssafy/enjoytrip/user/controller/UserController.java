@@ -60,11 +60,16 @@ public class UserController {
     ) {
         User loginUser = userService.login(request.getEmail(), request.getPassword());
         session.setAttribute("loginUser", loginUser);
+        System.out.println(session.getId());
         return ResponseEntity.ok().body(session.getId());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserInfo(@PathVariable("id") int userId) {
+    public ResponseEntity<User> getUserInfo(@PathVariable("id") int userId,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        System.out.println(session.getId());
+        System.out.println(session.getAttribute("loginUser"));
         return new ResponseEntity<>(userService.getUserInfo(userId), HttpStatus.OK);
     }
 
@@ -78,15 +83,18 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.invalidate();
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            System.out.println(session.getId());
+            System.out.println(session.getAttribute("loginUser"));
+            session.invalidate();
+        }
         return ResponseEntity.ok().body("로그아웃 완료");
     }
 
     @DeleteMapping("/{id}")
     public int dropOutUser(@PathVariable("id") int userId,
             @RequestBody @Valid String password, HttpServletRequest request) {
-        logout(request);
         return userService.dropOutById(userId, password);
     }
 }
