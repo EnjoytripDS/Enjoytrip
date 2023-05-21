@@ -1,4 +1,3 @@
-/*
 package com.ssafy.enjoytrip.commons.auth;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,5 +20,5 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         return true;
     }
 }
-*/
+
 
