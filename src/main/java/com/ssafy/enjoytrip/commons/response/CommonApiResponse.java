@@ -1,7 +1,9 @@
 package com.ssafy.enjoytrip.commons.response;
 
 import com.ssafy.enjoytrip.commons.exception.ErrorCode;
+import lombok.Getter;
 
+@Getter
 public final class CommonApiResponse<T> {
 
     private final boolean success;
