@@ -4,6 +4,9 @@ import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
 import com.ssafy.enjoytrip.qnaboard.dto.request.CreateQnaBoardRequest;
 import com.ssafy.enjoytrip.qnaboard.service.QnaBoardService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -34,11 +37,18 @@ public class QnaBoardController {
     }
 
     @GetMapping
+    @ApiOperation(value = "게시물 목록 조회", notes = "모든 게시물을 조회할 수 있습니다.")
     public ResponseEntity<List<QnaBoardView>> list() {
         return new ResponseEntity<List<QnaBoardView>>(qnaBoardService.getBoardList(), HttpStatus.OK);
     }
 
     @GetMapping("/search")
+    @ApiOperation(value = "게시물 검색", notes = "전체/글 제목/내용/작성자를 기준으로 게시물을 검색할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mode", value = "검색 기준", example = "4"),
+            @ApiImplicitParam(name = "keyword", value = "검색 키워드", example = "다정천사"),
+
+    })
     public ResponseEntity<List<QnaBoardView>> search(
             @RequestParam(defaultValue = "") String mode,
             @RequestParam(defaultValue = "") String keyword
@@ -53,18 +63,27 @@ public class QnaBoardController {
     }
 
     @PostMapping
+    @ApiOperation(value = "게시글 작성", notes = "제목, 글 내용 request를 받아 게시글을 작성할 수 있습니다. 작성자(닉네임)은 로그인한 유저 정보를 가져옵니다.")
     public ResponseEntity<String> write(@RequestBody CreateQnaBoardRequest request) {
         qnaBoardService.write(request.toViewDto());
         return new ResponseEntity<String>(SUCCESS, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "게시글 상세 조회", notes = "게시글 id에 해당하는 게시글 상세 정보를 조회할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
     public ResponseEntity<QnaBoardView> detail(@PathVariable int id) {
         return new ResponseEntity<QnaBoardView>(qnaBoardService.readBoardView(id), HttpStatus.OK);
     }
 
     // 게시글 수정
     @PutMapping("/{id}")
+    @ApiOperation(value = "게시글 수정", notes = "게시글 id에 해당하는 게시글을 수정할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
     public ResponseEntity<String> update(@PathVariable int id, @RequestBody QnaBoardView board) {
         qnaBoardService.modify(board);
         return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
@@ -72,6 +91,10 @@ public class QnaBoardController {
 
     // 게시글 삭제
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "게시글 삭제", notes = "게시글 id에 해당하는 게시글을 삭제할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
     public ResponseEntity<String> delete(@PathVariable int id) {
         if (qnaBoardService.remove(id)) {
             return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
