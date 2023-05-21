@@ -2,7 +2,8 @@ package com.ssafy.enjoytrip.commons.response;
 
 import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 
-public  final class CommonApiResponse<T> {
+public final class CommonApiResponse<T> {
+
     private final boolean success;
     private final T data;
     private final Error error;
