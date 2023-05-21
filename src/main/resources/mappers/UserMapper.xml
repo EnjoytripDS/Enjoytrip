@@ -26,9 +26,9 @@
 
   <update id="update" parameterType="User">
     UPDATE user
-    SET email      = #{email},
-        nickname   = #{nickname},
-        updatetime = now()
+    SET email = #{email},
+    nickname = #{nickname},
+    updatetime = now()
     WHERE id = #{id}
   </update>
 
@@ -55,4 +55,22 @@
     from user
     where nickname = #{nickname};
   </select>
+
+  <update id="saveRefreshToken" parameterType="map">
+    update user
+    set token = #{token}
+    where id = #{id}
+  </update>
+
+  <select id="getRefreshToken" parameterType="int" resultType="string">
+    select token
+    from user
+    where id = #{userid}
+  </select>
+
+  <update id="deleteRefreshToken" parameterType="map">
+    update user
+    set token = #{token, jdbcType=VARCHAR}
+    where id = #{userid}
+  </update>
 </mapper>
