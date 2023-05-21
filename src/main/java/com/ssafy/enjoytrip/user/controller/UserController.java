@@ -48,6 +48,7 @@ public class UserController {
         return ResponseEntity.ok().body("회원가입 완료");
     }
 
+
     @PostMapping("/check/email")
     @ApiOperation(value = "이메일 중복체크", notes = "이미 존재하는 이메일인지 중복체크 합니다.")
     public ResponseEntity<String> checkEmail(@RequestBody @Valid UserEmailRequest request) {
