@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.attraction.controller;
 import com.ssafy.enjoytrip.attraction.dto.Attraction;
 import com.ssafy.enjoytrip.attraction.dto.SearchCondition;
 import com.ssafy.enjoytrip.attraction.service.AttractionService;
+import io.swagger.annotations.Api;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1/search")
+@Api(tags = "관광지 API")
 public class AttractionController {
 
     private final AttractionService attractionService;

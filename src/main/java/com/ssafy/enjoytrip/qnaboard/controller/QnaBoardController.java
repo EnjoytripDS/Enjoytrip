@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.qnaboard.controller;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
 import com.ssafy.enjoytrip.qnaboard.dto.request.CreateQnaBoardRequest;
 import com.ssafy.enjoytrip.qnaboard.service.QnaBoardService;
+import io.swagger.annotations.Api;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1/qna-board")
+@Api(tags = "Q&A 게시판 API")
 public class QnaBoardController {
 
     private static final String SUCCESS = "succes";
