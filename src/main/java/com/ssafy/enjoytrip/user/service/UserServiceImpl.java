@@ -7,8 +7,6 @@ import com.ssafy.enjoytrip.user.exception.PasswordFailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
 import com.ssafy.enjoytrip.user.exception.UserNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,27 +39,6 @@ public class UserServiceImpl implements UserService {
 
     private boolean passwordCheck(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
-    }
-
-    @Override
-    public void saveRefreshToken(int userid, String refreshToken) throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", userid);
-        map.put("token", refreshToken);
-        userDao.saveRefreshToken(map);
-    }
-
-    @Override
-    public Object getRefreshToken(int userid) throws Exception {
-        return userDao.getRefreshToken(userid);
-    }
-
-    @Override
-    public void deleteRefreshToken(int userid) throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        map.put("userid", userid);
-        map.put("token", null);
-        userDao.deleteRefreshToken(map);
     }
 
     @Transactional

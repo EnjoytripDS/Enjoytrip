@@ -7,12 +7,6 @@ public interface UserService {
 
     User login(String email, String password);
 
-    public void saveRefreshToken(int userid, String refreshToken) throws Exception;
-
-    public Object getRefreshToken(int userid) throws Exception;
-
-    public void deleteRefreshToken(int userid) throws Exception;
-
     void signup(User user);
 
     int modify(User user);
