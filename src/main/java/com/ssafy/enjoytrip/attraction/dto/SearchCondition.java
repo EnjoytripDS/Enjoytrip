@@ -16,5 +16,6 @@ public class SearchCondition {
     private int gugunCode;
     private List<Integer> contentTypeIdList;
     private String keyword;
+    private String sort;
 
 }
