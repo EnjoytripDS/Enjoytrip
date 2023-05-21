@@ -7,6 +7,7 @@ import com.ssafy.enjoytrip.user.dto.request.LoginRequest;
 import com.ssafy.enjoytrip.user.dto.request.ModifyUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
+import com.ssafy.enjoytrip.user.dto.response.LoginResponse;
 import com.ssafy.enjoytrip.user.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,7 +40,6 @@ public class UserController {
     public ResponseEntity<String> signUp(@RequestBody @Valid CreateUserRequest request) {
         userService.signup(request.toDto());
         return ResponseEntity.ok().body("회원가입 완료");
-
     }
 
     @PostMapping("/check/email")
@@ -55,17 +55,21 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<LoginResponse> login(
             @RequestBody @Valid LoginRequest request,
             HttpSession session
     ) {
         User loginUser = userService.login(request.getEmail(), request.getPassword());
         session.setAttribute("loginUser", loginUser);
-        return ResponseEntity.ok().body(session.getId());
+        return ResponseEntity.ok().body(new LoginResponse(loginUser.getId(), session.getId()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserInfo(@PathVariable("id") int userId) {
+    public ResponseEntity<User> getUserInfo(@PathVariable("id") int userId,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        System.out.println(session.getId());
+        System.out.println(session.getAttribute("loginUser"));
         return new ResponseEntity<>(userService.getUserInfo(userId), HttpStatus.OK);
     }
 
@@ -79,13 +83,18 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.invalidate();
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            System.out.println(session.getId());
+            System.out.println(session.getAttribute("loginUser"));
+            session.invalidate();
+        }
         return ResponseEntity.ok().body("로그아웃 완료");
     }
 
     @DeleteMapping("/{id}")
-    public int dropOutUser(@PathVariable("id") int userId) {
-        return userService.dropOutById(userId);
+    public int dropOutUser(@PathVariable("id") int userId,
+            @RequestBody @Valid String password, HttpServletRequest request) {
+        return userService.dropOutById(userId, password);
     }
 }

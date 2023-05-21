@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new LoginCheckInterceptor())
+//        registry.addInterceptor(new JwtInterceptor())
 //                .order(1)
 //                .addPathPatterns("/**")
 //                .excludePathPatterns("/**/user", "/**/user/login", "/**/user/check/*", "/**/user/logout");
@@ -17,6 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE");
+        registry.addMapping("/**").allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
 }

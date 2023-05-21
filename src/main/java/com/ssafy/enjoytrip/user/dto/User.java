@@ -27,4 +27,10 @@ public class User {
         this.nickname = nickname;
         this.role = UserRole.COMMON;
     }
+
+    public User(String email, String nickname) {
+        this.email = email;
+        this.nickname = nickname;
+        this.role = UserRole.COMMON;
+    }
 }
