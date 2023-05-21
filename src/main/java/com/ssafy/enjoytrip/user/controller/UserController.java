@@ -12,7 +12,6 @@ import com.ssafy.enjoytrip.user.service.UserService;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -79,16 +78,16 @@ public class UserController {
                         loginUser.getId());// key, data
                 String refreshToken = jwtService.createRefreshToken("userid",
                         loginUser.getId());// key, data
+                log.info("로그인 accessToken 정보 : {}", accessToken);
+                log.info("로그인 refreshToken 정보 : {}", refreshToken);
                 userService.saveRefreshToken(loginUser.getId(), refreshToken);
-                logger.debug("로그인 accessToken 정보 : {}", accessToken);
-                logger.debug("로그인 refreshToken 정보 : {}", refreshToken);
                 resultMap.put("access-token", accessToken);
                 resultMap.put("refresh-token", refreshToken);
                 resultMap.put("message", SUCCESS);
                 status = HttpStatus.ACCEPTED;
             } else {
                 resultMap.put("message", FAIL);
-                status = HttpStatus.ACCEPTED;
+                status = HttpStatus.UNAUTHORIZED;
             }
         } catch (Exception e) {
             logger.error("로그인 실패 : {}", e);
