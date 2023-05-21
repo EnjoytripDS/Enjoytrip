@@ -1,8 +1,11 @@
 package com.ssafy.enjoytrip.user.exception;
 
-public class InvalidPasswordException extends RuntimeException {
+import com.ssafy.enjoytrip.commons.exception.BaseException;
+import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 
-    public InvalidPasswordException() {
-        super("비밀번호가 맞지 않습니다.");
+public class InvalidPasswordException extends BaseException {
+
+    public InvalidPasswordException(String message) {
+        super(message, ErrorCode.PASSWORD_NOT_MATCHED);
     }
 }
