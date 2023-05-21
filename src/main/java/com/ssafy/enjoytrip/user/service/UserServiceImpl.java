@@ -55,27 +55,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public int modify(User userInfo) {
-//        // 기존 유저의 비밀번호와 회원정보 수정을 위해 입력한 비밀번호가 일치하는지 확인
-//        String originalPassword = userDao.findById(userInfo.getId()).getPassword();
-//        // 일치하지 않을 경우, 수정 불가 에러 리턴
-//        if (!passwordCheck(userInfo.getPassword(), originalPassword)) {
-//            throw new PasswordFailException();
-//        }
-//        // 일치할 경우
         checkDupNickname(userInfo.getNickname());
         return userDao.update(userInfo);
     }
 
     @Transactional
     @Override
-    public int dropOutById(int id, String password) {
-        // 기존 유저의 비밀번호와 회원정보 수정을 위해 입력한 비밀번호가 일치하는지 확인
-        String originalPassword = userDao.findById(id).getPassword();
-        // 일치하지 않을 경우, 수정 불가 에러 리턴
-        if (!passwordCheck(password, originalPassword)) {
-            throw new PasswordFailException();
-        }
-        // 일치할 경우
+    public int dropOutById(int id) {
         return userDao.deleteById(id);
     }
 

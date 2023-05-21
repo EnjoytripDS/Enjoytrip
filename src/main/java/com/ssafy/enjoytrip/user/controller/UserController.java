@@ -115,8 +115,7 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "유저 id", example = "1")
     })
-    public int delete(@PathVariable("id") int userId,
-            @RequestBody @Valid String password, HttpServletRequest request) {
-        return userService.dropOutById(userId, password);
+    public int delete(@PathVariable("id") int userId) {
+        return userService.dropOutById(userId);
     }
 }
