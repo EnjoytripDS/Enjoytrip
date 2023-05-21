@@ -90,7 +90,6 @@ public class UserController {
                 status = HttpStatus.UNAUTHORIZED;
             }
         } catch (Exception e) {
-            logger.error("로그인 실패 : {}", e);
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -103,19 +102,16 @@ public class UserController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.UNAUTHORIZED;
         if (jwtService.checkToken(request.getHeader("access-token"))) {
-            logger.info("사용 가능한 토큰");
             try {
                 User user = userService.getUserInfo(userId);
                 resultMap.put("userInfo", user);
                 resultMap.put("message", SUCCESS);
                 status = HttpStatus.ACCEPTED;
             } catch (Exception e) {
-                logger.error("조회 실패 : {}", e);
                 resultMap.put("message", e.getMessage());
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
         } else {
-            logger.error("사용 불가능 토큰");
             resultMap.put("message", FAIL);
             status = HttpStatus.UNAUTHORIZED;
         }
@@ -139,7 +135,6 @@ public class UserController {
             resultMap.put("message", SUCCESS);
             status = HttpStatus.ACCEPTED;
         } catch (Exception e) {
-            logger.error("로그아웃 실패 : {}", e);
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -153,18 +148,14 @@ public class UserController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         String token = request.getHeader("refresh-token");
-        logger.debug("token : {}, memberDto : {}", token, user);
         if (jwtService.checkToken(token)) {
             if (token.equals(userService.getRefreshToken(user.getId()))) {
                 String accessToken = jwtService.createAccessToken("userid", user.getId());
-                logger.debug("token : {}", accessToken);
-                logger.debug("정상적으로 액세스토큰 재발급");
                 resultMap.put("access-token", accessToken);
                 resultMap.put("message", SUCCESS);
                 status = HttpStatus.ACCEPTED;
             }
         } else {
-            logger.debug("리프레쉬토큰도 사용불");
             status = HttpStatus.UNAUTHORIZED;
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
