@@ -19,7 +19,7 @@
   </insert>
 
   <select id="findById" parameterType="int" resultMap="userMap">
-    SELECT id, email, password, nickname, createtime, updatetime
+    SELECT id, email, password, role, nickname, createtime, updatetime
     FROM user
     WHERE id = #{id}
   </select>

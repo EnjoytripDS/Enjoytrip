@@ -7,6 +7,7 @@ import com.ssafy.enjoytrip.user.dto.request.LoginRequest;
 import com.ssafy.enjoytrip.user.dto.request.ModifyUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
+import com.ssafy.enjoytrip.user.dto.response.LoginResponse;
 import com.ssafy.enjoytrip.user.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -54,14 +55,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<LoginResponse> login(
             @RequestBody @Valid LoginRequest request,
             HttpSession session
     ) {
         User loginUser = userService.login(request.getEmail(), request.getPassword());
         session.setAttribute("loginUser", loginUser);
-        System.out.println(session.getId());
-        return ResponseEntity.ok().body(session.getId());
+        return ResponseEntity.ok().body(new LoginResponse(loginUser.getId(), session.getId()));
     }
 
     @GetMapping("/{id}")
