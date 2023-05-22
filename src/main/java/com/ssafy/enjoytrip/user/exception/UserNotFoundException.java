@@ -1,8 +1,11 @@
 package com.ssafy.enjoytrip.user.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import com.ssafy.enjoytrip.commons.exception.BaseException;
+import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 
-    public UserNotFoundException() {
-        super("미등록 유저");
+public class UserNotFoundException extends BaseException {
+
+    public UserNotFoundException(String message) {
+        super(message, ErrorCode.USER_NOT_FOUND);
     }
 }

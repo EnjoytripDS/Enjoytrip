@@ -1,15 +1,12 @@
 package com.ssafy.enjoytrip.qnaboard.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.ssafy.enjoytrip.commons.exception.BaseException;
+import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class QnaBoardNotFoundException extends RuntimeException {
-
-    private static final long serialVersionUID = 1L;
+public class QnaBoardNotFoundException extends BaseException {
 
     public QnaBoardNotFoundException(String msg) {
-        super(msg);
+        super(msg, ErrorCode.QNA_NOT_FOUND);
     }
 
 }
