@@ -60,6 +60,19 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public int modifyPwd(int id, String curpwd, String newpwd) {
+        User user = userDao.findById(id);
+        if (!passwordCheck(curpwd, user.getPassword())) {
+            throw new InvalidPasswordException("로그인 실패");
+        }
+        String encodedPassword = passwordEncoder.encode(newpwd);
+        User newUserPwd = new User(encodedPassword);
+        newUserPwd.setId(id);
+        return userDao.updatePwd(newUserPwd);
+    }
+
+    @Transactional
+    @Override
     public int dropOutById(int id, String pwd) {
         User user = userDao.findById(id);
         if (!passwordCheck(pwd, user.getPassword())) {

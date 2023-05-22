@@ -5,6 +5,7 @@ import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.dto.request.CreateUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.LoginRequest;
+import com.ssafy.enjoytrip.user.dto.request.ModifyPwdRequest;
 import com.ssafy.enjoytrip.user.dto.request.ModifyUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
@@ -80,6 +81,7 @@ public class UserController {
     })
     public CommonApiResponse<User> getUserInfo(@PathVariable("id") int userId) {
         User userInfo = userService.getUserInfo(userId);
+        userInfo.setPassword("");
         return CommonApiResponse.success(userInfo);
     }
 
@@ -93,6 +95,13 @@ public class UserController {
         User userInfo = request.toDto();
         userInfo.setId(userId);
         userService.modify(userInfo);
+        return CommonApiResponse.success("ok");
+    }
+
+    @PutMapping("/password")
+    @ApiOperation(value = "유저 비밀번호 수정", notes = "유저 id에 해당하는 유저의 비밀번호를 수정할 수 있습니다.")
+    public CommonApiResponse<String> modifyUserPwd(@RequestBody @Valid ModifyPwdRequest request) {
+        userService.modifyPwd(request.getUserId(), request.getCurPwd(), request.getNewPwd());
         return CommonApiResponse.success("ok");
     }
 

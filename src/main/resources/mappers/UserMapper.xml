@@ -32,6 +32,13 @@
     WHERE id = #{id}
   </update>
 
+  <update id="updatePwd" parameterType="User">
+    UPDATE user
+    SET password   = #{password},
+        updatetime = now()
+    WHERE id = #{id}
+  </update>
+
   <delete id="deleteById" parameterType="int">
     DELETE
     FROM user

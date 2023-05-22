@@ -33,4 +33,8 @@ public class User {
         this.nickname = nickname;
         this.role = 1;
     }
+
+    public User(String password) {
+        this.password = password;
+    }
 }
