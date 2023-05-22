@@ -11,7 +11,7 @@ public interface UserService {
 
     int modify(User user);
 
-    int dropOutById(int id);
+    int dropOutById(int id, String pwd);
 
     void checkDupEmail(String email);
 

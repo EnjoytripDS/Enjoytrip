@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import jdk.nashorn.internal.ir.RuntimeNode.Request;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,26 +65,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    @ApiOperation(value = "로그인", notes = "이메일, 비밀번호 request를 받아 세션 방식으로 로그인합니다.")
+    @ApiOperation(value = "로그인", notes = "이메일, 비밀번호 request를 받아 로그인합니다.")
     public CommonApiResponse<LoginResponse> login(
-            @RequestBody @Valid LoginRequest request,
-            HttpSession session
+            @RequestBody @Valid LoginRequest request
     ) {
         User loginUser = userService.login(request.getEmail(), request.getPassword());
-        session.setAttribute("loginUser", loginUser);
-        return CommonApiResponse.success(new LoginResponse(loginUser.getId(), session.getId()));
+        return CommonApiResponse.success(new LoginResponse(loginUser.getId()));
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "유저 정보 읽기", notes = "유저 id에 해당하는 유저 정보를 조회할 수 있습니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "유저 id", example = "1")
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
-    public CommonApiResponse<User> getUserInfo(@PathVariable("id") int userId,
-            HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        log.info("JSESSIONID: ", session.getId());
-        log.info("세션 유저 정보: ", session.getAttribute("loginUser"));
+    public CommonApiResponse<User> getUserInfo(@PathVariable("id") int userId) {
         User userInfo = userService.getUserInfo(userId);
         return CommonApiResponse.success(userInfo);
     }
@@ -91,7 +86,7 @@ public class UserController {
     @PutMapping("/{id}")
     @ApiOperation(value = "유저 정보 수정", notes = "유저 id에 해당하는 유저 정보를 수정할 수 있습니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "유저 id", example = "1")
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
     public CommonApiResponse<String> modifyUserInfo(@PathVariable("id") int userId,
             @RequestBody ModifyUserRequest request) {
@@ -102,24 +97,19 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    @ApiOperation(value = "로그아웃", notes = "로그인한 유저 세션 정보를 제거하여 로그아웃합니다.")
-    public CommonApiResponse<String> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            log.info("JSESSIONID: ", session.getId());
-            log.info("세션 유저 정보: ", session.getAttribute("loginUser"));
-            session.invalidate();
-        }
+    @ApiOperation(value = "로그아웃", notes = "로그인한 유저 정보를 제거하여 로그아웃합니다.")
+    public CommonApiResponse<String> logout() {
         return CommonApiResponse.success("ok");
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "유저 삭제", notes = "유저 id에 해당하는 유저 정보를 삭제할 수 있습니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "유저 id", example = "1")
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
-    public CommonApiResponse<String> delete(@PathVariable("id") int userId) {
-        userService.dropOutById(userId);
+    public CommonApiResponse<String> delete(@PathVariable("id") int userId,
+            @RequestBody String checkPassword) {
+        userService.dropOutById(userId, checkPassword);
         return CommonApiResponse.success("ok");
     }
 }

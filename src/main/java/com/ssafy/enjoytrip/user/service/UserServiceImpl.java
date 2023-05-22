@@ -47,7 +47,6 @@ public class UserServiceImpl implements UserService {
         checkDupEmail(user.getEmail());
         checkDupNickname(user.getNickname());
         String encodedPassword = passwordEncoder.encode(user.getPassword());
-        System.out.println(encodedPassword);
         user.setPassword(encodedPassword);
         userDao.insert(user);
     }
@@ -61,7 +60,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public int dropOutById(int id) {
+    public int dropOutById(int id, String pwd) {
+        User user = userDao.findById(id);
+        if (!passwordCheck(pwd, user.getPassword())) {
+            throw new InvalidPasswordException("비밀번호 불일치");
+        }
         return userDao.deleteById(id);
     }
 
