@@ -32,6 +32,13 @@
     WHERE id = #{id}
   </update>
 
+  <update id="updatePwd" parameterType="User">
+    UPDATE user
+    SET password   = #{password},
+        updatetime = now()
+    WHERE id = #{id}
+  </update>
+
   <delete id="deleteById" parameterType="int">
     DELETE
     FROM user
@@ -55,4 +62,22 @@
     from user
     where nickname = #{nickname};
   </select>
+
+  <update id="saveRefreshToken" parameterType="map">
+    update user
+    set token = #{token}
+    where id = #{id}
+  </update>
+
+  <select id="getRefreshToken" parameterType="int" resultType="string">
+    select token
+    from user
+    where id = #{userid}
+  </select>
+
+  <update id="deleteRefreshToken" parameterType="map">
+    update user
+    set token = #{token, jdbcType=VARCHAR}
+    where id = #{userid}
+  </update>
 </mapper>

@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class LoginResponse {
 
-    private int userId;
-    private String jSessionId;
+    int userId;
 
 
 }

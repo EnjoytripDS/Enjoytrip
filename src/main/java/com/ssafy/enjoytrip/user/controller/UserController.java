@@ -1,10 +1,15 @@
 package com.ssafy.enjoytrip.user.controller;
 
 
+import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.dto.request.CreateUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.LoginRequest;
+import com.ssafy.enjoytrip.user.dto.request.ModifyPwdRequest;
 import com.ssafy.enjoytrip.user.dto.request.ModifyUserRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserEmailRequest;
 import com.ssafy.enjoytrip.user.dto.request.UserNicknameRequest;
@@ -17,7 +22,10 @@ import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import jdk.nashorn.internal.ir.RuntimeNode.Request;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,10 +43,15 @@ public class UserController {
 
     private final UserService userService;
 
+    private static final String SUCCESS = "success";
+    private static final String FAIL = "fail";
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping
     @ApiOperation(value = "회원가입", notes = "이메일, 비밀번호, 닉네임 request를 받아 회원가입합니다.")
@@ -64,34 +77,67 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    @ApiOperation(value = "로그인", notes = "이메일, 비밀번호 request를 받아 세션 방식으로 로그인합니다.")
-    public CommonApiResponse<LoginResponse> login(
-            @RequestBody @Valid LoginRequest request,
-            HttpSession session
+    @ApiOperation(value = "로그인", notes = "이메일, 비밀번호 request를 받아 로그인합니다.")
+    public CommonApiResponse<Map<String, Object>> login(
+            @RequestBody LoginRequest request
     ) {
-        User loginUser = userService.login(request.getEmail(), request.getPassword());
-        session.setAttribute("loginUser", loginUser);
-        return CommonApiResponse.success(new LoginResponse(loginUser.getId(), session.getId()));
+        log.info("request ", request.getEmail());
+        log.info("request2 ", request.getPassword());
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try {
+            User loginUser = userService.login(request.getEmail(), request.getPassword());
+            if (loginUser != null) {
+                String accessToken = jwtService.createAccessToken("userid",
+                        loginUser.getId());// key, data
+                String refreshToken = jwtService.createRefreshToken("userid",
+                        loginUser.getId());// key, data
+                userService.saveRefreshToken(loginUser.getId(), refreshToken);
+                resultMap.put("access-token", accessToken);
+                resultMap.put("refresh-token", refreshToken);
+                resultMap.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            } else {
+                resultMap.put("message", FAIL);
+                status = HttpStatus.ACCEPTED;
+            }
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return CommonApiResponse.success(resultMap);
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "유저 정보 읽기", notes = "유저 id에 해당하는 유저 정보를 조회할 수 있습니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "유저 id", example = "1")
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
-    public CommonApiResponse<User> getUserInfo(@PathVariable("id") int userId,
+    public CommonApiResponse<Map<String, Object>> getUserInfo(@PathVariable("id") int userId,
             HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        log.info("JSESSIONID: ", session.getId());
-        log.info("세션 유저 정보: ", session.getAttribute("loginUser"));
-        User userInfo = userService.getUserInfo(userId);
-        return CommonApiResponse.success(userInfo);
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            try {
+                User user = userService.getUserInfo(userId);
+                resultMap.put("userInfo", user);
+                resultMap.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        } else {
+            resultMap.put("message", FAIL);
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return CommonApiResponse.success(resultMap);
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "유저 정보 수정", notes = "유저 id에 해당하는 유저 정보를 수정할 수 있습니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "유저 id", example = "1")
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
     public CommonApiResponse<String> modifyUserInfo(@PathVariable("id") int userId,
             @RequestBody ModifyUserRequest request) {
@@ -101,25 +147,57 @@ public class UserController {
         return CommonApiResponse.success("ok");
     }
 
-    @PostMapping("/logout")
-    @ApiOperation(value = "로그아웃", notes = "로그인한 유저 세션 정보를 제거하여 로그아웃합니다.")
-    public CommonApiResponse<String> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            log.info("JSESSIONID: ", session.getId());
-            log.info("세션 유저 정보: ", session.getAttribute("loginUser"));
-            session.invalidate();
-        }
+    @PutMapping("/password")
+    @ApiOperation(value = "유저 비밀번호 수정", notes = "유저 id에 해당하는 유저의 비밀번호를 수정할 수 있습니다.")
+    public CommonApiResponse<String> modifyUserPwd(@RequestBody @Valid ModifyPwdRequest request) {
+        userService.modifyPwd(request.getUserId(), request.getCurPwd(), request.getNewPwd());
         return CommonApiResponse.success("ok");
+    }
+
+    @GetMapping("/logout/{id}")
+    @ApiOperation(value = "로그아웃", notes = "로그인한 유저 정보를 제거하여 로그아웃합니다.")
+    public CommonApiResponse<?> logout(@PathVariable("id") int id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            userService.deleteRefreshToken(id);
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return CommonApiResponse.success(resultMap);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody User user,
+            HttpServletRequest request)
+            throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String token = request.getHeader("refresh-token");
+        if (jwtService.checkToken(token)) {
+            if (token.equals(userService.getRefreshToken(user.getId()))) {
+                String accessToken = jwtService.createAccessToken("userid", user.getId());
+                resultMap.put("access-token", accessToken);
+                resultMap.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            }
+        } else {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "유저 삭제", notes = "유저 id에 해당하는 유저 정보를 삭제할 수 있습니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "유저 id", example = "1")
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
-    public CommonApiResponse<String> delete(@PathVariable("id") int userId) {
-        userService.dropOutById(userId);
+    public CommonApiResponse<String> delete(@PathVariable("id") int userId,
+            @RequestBody String checkPassword) {
+        userService.dropOutById(userId, checkPassword);
         return CommonApiResponse.success("ok");
     }
 }

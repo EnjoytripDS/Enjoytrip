@@ -1,6 +1,6 @@
 package com.ssafy.enjoytrip.commons.config;
 
-import com.ssafy.enjoytrip.commons.auth.LoginCheckInterceptor;
+import com.ssafy.enjoytrip.commons.auth.JwtInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,10 +12,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginCheckInterceptor())
+        registry.addInterceptor(new JwtInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/**/user", "/**/user/login", "/**/user/check/*", "/**/user/logout");
+                .excludePathPatterns("/**/user/*", "/**/user/login", "/**/user/check/*",
+                        "/**/user/logout/*", "/**/user/refresh");
     }
 
     @Override
@@ -26,8 +27,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
 }
