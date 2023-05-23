@@ -46,7 +46,6 @@ public class QnaBoardController {
     @GetMapping
     @ApiOperation(value = "게시물 목록 조회", notes = "모든 게시물을 조회할 수 있습니다.")
     public CommonApiResponse<List<QnaBoardView>> list(HttpServletRequest request) {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
         List<QnaBoardView> result = new ArrayList<>();
         if (jwtService.checkToken(request.getHeader("access-token"))) {
             result = qnaBoardService.getBoardList();
@@ -77,9 +76,12 @@ public class QnaBoardController {
 
     @PostMapping
     @ApiOperation(value = "게시글 작성", notes = "제목, 글 내용 request를 받아 게시글을 작성할 수 있습니다. 작성자(닉네임)은 로그인한 유저 정보를 가져옵니다.")
-    public ResponseEntity<String> write(@RequestBody CreateQnaBoardRequest request) {
-        qnaBoardService.write(request.toViewDto());
-        return new ResponseEntity<String>(SUCCESS, HttpStatus.CREATED);
+    public CommonApiResponse<String> write(@RequestBody CreateQnaBoardRequest request,
+            HttpServletRequest req) {
+        if (jwtService.checkToken(req.getHeader("access-token"))) {
+            qnaBoardService.write(request.toViewDto());
+        }
+        return CommonApiResponse.success("ok");
     }
 
     @GetMapping("/{id}")

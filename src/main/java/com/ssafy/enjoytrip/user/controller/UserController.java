@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.user.controller;
 
 
+import com.ssafy.enjoytrip.commons.exception.UnAuthorizedException;
 import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
 import java.util.HashMap;
 import java.util.Map;
@@ -171,7 +172,7 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody User user,
+    public CommonApiResponse<?> refreshToken(@RequestBody User user,
             HttpServletRequest request)
             throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
@@ -187,7 +188,7 @@ public class UserController {
         } else {
             status = HttpStatus.UNAUTHORIZED;
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+        return CommonApiResponse.success(resultMap);
     }
 
     @DeleteMapping("/{id}")
