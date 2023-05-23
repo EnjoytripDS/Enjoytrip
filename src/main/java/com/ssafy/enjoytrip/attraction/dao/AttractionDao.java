@@ -11,4 +11,6 @@ public interface AttractionDao {
     List<String> getGugun(int sidoCode);
 
     List<Attraction> selectAllByCondition(SearchCondition searchCondition);
+
+    Attraction selectOneById(int attractionId);
 }
