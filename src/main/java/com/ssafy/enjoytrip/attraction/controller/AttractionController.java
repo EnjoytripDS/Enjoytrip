@@ -26,13 +26,13 @@ public class AttractionController {
         this.attractionService = attractionService;
     }
 
-
     @GetMapping("/{sidoCode}/gugun")
     @ApiOperation(value = "구/군 정보 조회", notes = "선택한 시/도에 해당하는 유저 정보를 조회할 수 있습니다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sidoCode", value = "시/도 코드", example = "1")
     })
     public CommonApiResponse<List<String>> getGugun(@PathVariable("sidoCode") int sidoCode) {
+
         List<String> gugunList = attractionService.getGugun(sidoCode);
         return CommonApiResponse.success(gugunList);
     }
@@ -46,6 +46,7 @@ public class AttractionController {
      * @return : 관광지 리스트
      */
     @GetMapping
+
     @ApiOperation(value = "관광지 검색", notes = "시/도, 구/군, 관광지 유형, 키워드 정보를 통해 해당하는 관광지들을 검색하여 조회할 수 있습니다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sidoCode", value = "시/도 코드", example = "6"),
@@ -54,6 +55,7 @@ public class AttractionController {
             @ApiImplicitParam(name = "keyword", value = "검색 키워드", example = "해운대")
     })
     public CommonApiResponse<List<Attraction>> search(
+
             @RequestParam(value = "sidoCode", defaultValue = "0") int sidoCode,
             @RequestParam(value = "gugunCode",defaultValue = "0") int gugunCode,
             @RequestParam(value = "contentTypeId", required = false) List<Integer>  contentTypeIdList,
