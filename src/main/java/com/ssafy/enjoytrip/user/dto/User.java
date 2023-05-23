@@ -16,7 +16,7 @@ public class User {
     private String email;
     private String password;
     private String nickname;
-    private UserRole role;
+    private int role;
     private String createtime;
     private String updatetime;
 
@@ -25,6 +25,12 @@ public class User {
         this.password = password;
         this.email = email;
         this.nickname = nickname;
-        this.role = UserRole.COMMON;
+        this.role = 1;
+    }
+
+    public User(String email, String nickname) {
+        this.email = email;
+        this.nickname = nickname;
+        this.role = 1;
     }
 }

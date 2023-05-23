@@ -25,4 +25,9 @@ public class AttractionServiceImpl implements AttractionService {
         return attractionDao.selectAllByCondition(searchCondition);
     }
 
+    @Override
+    public Attraction readAttractionDetails(int attractionId) {
+        return attractionDao.selectOneById(attractionId);
+    }
+
 }

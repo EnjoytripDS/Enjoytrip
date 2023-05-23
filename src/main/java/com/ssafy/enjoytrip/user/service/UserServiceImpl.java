@@ -1,9 +1,9 @@
 package com.ssafy.enjoytrip.user.service;
 
+import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 import com.ssafy.enjoytrip.user.dao.UserDao;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.exception.InvalidPasswordException;
-import com.ssafy.enjoytrip.user.exception.PasswordFailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedEmailException;
 import com.ssafy.enjoytrip.user.exception.UserDuplicatedNicknameException;
 import com.ssafy.enjoytrip.user.exception.UserNotFoundException;
@@ -27,11 +27,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String email, String rawPassword) {
         User user = userDao.findByEmail(email);
+
         if (user == null) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("로그인 실패");
         }
         if (!passwordCheck(rawPassword, user.getPassword())) {
-            throw new InvalidPasswordException();
+            throw new InvalidPasswordException("로그인 실패");
         }
         return user;
     }
@@ -54,13 +55,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public int modify(User userInfo) {
-        // 기존 유저의 비밀번호와 회원정보 수정을 위해 입력한 비밀번호가 일치하는지 확인
-        String originalPassword = userDao.findById(userInfo.getId()).getPassword();
-        // 일치하지 않을 경우, 수정 불가 에러 리턴
-        if (!passwordCheck(userInfo.getPassword(), originalPassword)) {
-            throw new PasswordFailException();
-        }
-        // 일치할 경우
+        checkDupNickname(userInfo.getNickname());
         return userDao.update(userInfo);
     }
 
@@ -75,7 +70,7 @@ public class UserServiceImpl implements UserService {
     public void checkDupEmail(String email) {
         int dupCnt = userDao.existsByEmail(email);
         if (dupCnt > 0) {
-            throw new UserDuplicatedEmailException();
+            throw new UserDuplicatedEmailException(ErrorCode.DUPLICATED_EMAIL);
         }
     }
 
@@ -83,7 +78,7 @@ public class UserServiceImpl implements UserService {
     public void checkDupNickname(String nickname) {
         int dupCnt = userDao.existsByNickname(nickname);
         if (dupCnt > 0) {
-            throw new UserDuplicatedNicknameException();
+            throw new UserDuplicatedNicknameException(ErrorCode.DUPLICATED_NICKNAME);
         }
     }
 

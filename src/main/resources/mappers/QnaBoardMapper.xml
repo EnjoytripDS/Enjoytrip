@@ -48,7 +48,7 @@
 
 
   <!-- 검색 기능 -->
-  <!-- Mode 1: 전체 검색 / Mode 2: 제목 검색 / Mode 3: 글 내용 검색 / Mode 4: 사용자 (닉네임) 검색-->
+  <!-- Mode null or 1: 전체 검색 / Mode 2: 제목 검색 / Mode 3: 글 내용 검색 / Mode 4: 사용자 (닉네임) 검색-->
   <select id="selectListByCondition" resultMap="boardViewMap" parameterType="java.util.HashMap">
     SELECT q.id, q.title, u.nickname, q.content, q.hit,
     date_format(q.createtime, '%Y-%m-%d %H:%i') as createtime

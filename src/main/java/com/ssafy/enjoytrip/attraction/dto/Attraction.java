@@ -26,4 +26,5 @@ public class Attraction {
     private double latitude;
     private double longitude;
     private String mlevel; //attraction_info table
+    private String overview;
 }
