@@ -31,7 +31,6 @@ public class JwtInterceptor implements HandlerInterceptor {
             logger.info("토큰 사용 가능 : {}", token);
             return true;
         } else {
-            logger.info("잘못되게 받아온 토큰: ", token);
             logger.info("토큰 사용 불가능 : {}", token);
             throw new UnAuthorizedException();
         }
