@@ -43,7 +43,7 @@ public class AttractionController {
             @RequestParam(value = "sidoCode", defaultValue = "0") int sidoCode,
             @RequestParam(value = "gugunCode",defaultValue = "0") int gugunCode,
             @RequestParam(value = "contentTypeId", required = false) List<Integer>  contentTypeIdList,
-            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "keyword", required = false) String keyword
     ) {
         List<Attraction> attractionList = attractionService.search(
                 new SearchCondition(
