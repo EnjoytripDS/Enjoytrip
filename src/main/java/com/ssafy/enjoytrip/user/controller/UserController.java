@@ -1,7 +1,17 @@
 package com.ssafy.enjoytrip.user.controller;
 
 
+import static com.ssafy.enjoytrip.commons.exception.ErrorCode.COMMON_SYSTEM_ERROR;
+import static com.ssafy.enjoytrip.commons.exception.ErrorCode.PASSWORD_NOT_MATCHED;
+import static com.ssafy.enjoytrip.commons.exception.ErrorCode.USER_NOT_FOUND;
+
+import com.ssafy.enjoytrip.commons.exception.UnAuthorizedException;
 import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
+import com.ssafy.enjoytrip.user.exception.InvalidPasswordException;
+import com.ssafy.enjoytrip.user.exception.UserNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.dto.request.CreateUserRequest;
@@ -78,10 +88,7 @@ public class UserController {
     public CommonApiResponse<Map<String, Object>> login(
             @RequestBody LoginRequest request
     ) {
-        log.info("request ", request.getEmail());
-        log.info("request2 ", request.getPassword());
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
         try {
             User loginUser = userService.login(request.getEmail(), request.getPassword());
             if (loginUser != null) {
@@ -93,14 +100,15 @@ public class UserController {
                 resultMap.put("access-token", accessToken);
                 resultMap.put("refresh-token", refreshToken);
                 resultMap.put("message", SUCCESS);
-                status = HttpStatus.ACCEPTED;
-            } else {
-                resultMap.put("message", FAIL);
-                status = HttpStatus.ACCEPTED;
             }
         } catch (Exception e) {
-            resultMap.put("message", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            if (e instanceof InvalidPasswordException) {
+                return CommonApiResponse.fail(PASSWORD_NOT_MATCHED);
+            } else if (e instanceof UserNotFoundException) {
+                return CommonApiResponse.fail(USER_NOT_FOUND);
+            } else {
+                return CommonApiResponse.fail(COMMON_SYSTEM_ERROR);
+            }
         }
         return CommonApiResponse.success(resultMap);
     }
@@ -168,7 +176,7 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody User user,
+    public CommonApiResponse<?> refreshToken(@RequestBody User user,
             HttpServletRequest request)
             throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
@@ -184,7 +192,7 @@ public class UserController {
         } else {
             status = HttpStatus.UNAUTHORIZED;
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+        return CommonApiResponse.success(resultMap);
     }
 
     @DeleteMapping("/{id}")

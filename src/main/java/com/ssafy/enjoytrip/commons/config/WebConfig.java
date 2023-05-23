@@ -10,19 +10,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new JwtInterceptor())
-                .order(1)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/**/user/*", "/**/user/login", "/**/user/check/*",
-                        "/**/user/logout/*", "/**/user/refresh");
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(new JwtInterceptor())
+//                .order(1)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/**/user/*", "/**/user/login", "/**/user/check/*",
+//                        "/**/user/logout/*", "/**/user/refresh");
+//    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("access-token", "refresh-token", "Content-Type");
     }
 
     @Override
