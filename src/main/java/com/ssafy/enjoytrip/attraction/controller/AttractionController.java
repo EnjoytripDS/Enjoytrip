@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +45,7 @@ public class AttractionController {
      * @param gugunCode : 구/군 (단일 선택 / 전체:0)
      * @param contentTypeIdList : 관광지 유형 (복수선택 가능 / 전체: null)
      * @param keyword : 검색 키워드
+     * @param sort : 정렬 기준
      * @return : 관광지 리스트
      */
     @GetMapping
