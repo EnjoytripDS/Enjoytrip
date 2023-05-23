@@ -20,6 +20,7 @@
     <result column="latitude" property="latitude"/>
     <result column="longitude" property="longitude"/>
     <result column="mlevel" property="mlevel"/>
+    <result column="overview" property="overview"/>
   </resultMap>
 
   <select id="getGugun" parameterType="int" resultType="string">
@@ -49,6 +50,13 @@
         </foreach>
       </if>
     </where>
+
+  </select>
+
+  <select id="selectOneById" resultMap="attractionMap" parameterType="int">
+    select ai.content_id, ai.content_type_id, ai.title, ai.addr1, ai.addr2, ai.zipcode, ai.tel, ai.first_image, ai.first_image2, ai.readcount, ai.sido_code, ai.gugun_code, ai.latitude, ai.longitude, ai.mlevel, ad.overview
+    from attraction_info ai join attraction_description ad on ai.content_id = ad.content_id
+    where ai.content_id = #{id};
   </select>
 
 </mapper>
