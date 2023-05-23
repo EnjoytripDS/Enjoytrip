@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.qnaboard.controller;
 
+import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
+import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
 import com.ssafy.enjoytrip.qnaboard.dto.request.CreateQnaBoardRequest;
 import com.ssafy.enjoytrip.qnaboard.service.QnaBoardService;
@@ -7,8 +9,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +36,8 @@ public class QnaBoardController {
 
     private final QnaBoardService qnaBoardService;
 
+    @Autowired
+    private JwtService jwtService;
 
     public QnaBoardController(QnaBoardService qnaBoardService) {
         this.qnaBoardService = qnaBoardService;
@@ -38,8 +45,13 @@ public class QnaBoardController {
 
     @GetMapping
     @ApiOperation(value = "게시물 목록 조회", notes = "모든 게시물을 조회할 수 있습니다.")
-    public ResponseEntity<List<QnaBoardView>> list() {
-        return new ResponseEntity<List<QnaBoardView>>(qnaBoardService.getBoardList(), HttpStatus.OK);
+    public CommonApiResponse<List<QnaBoardView>> list(HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        List<QnaBoardView> result = new ArrayList<>();
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            result = qnaBoardService.getBoardList();
+        }
+        return CommonApiResponse.success(result);
     }
 
     @GetMapping("/search")
@@ -58,7 +70,8 @@ public class QnaBoardController {
         params.put("mode", mode);
         params.put("keyword", keyword);
 
-        return new ResponseEntity<List<QnaBoardView>>(qnaBoardService.getBoardListWithSearch(params),
+        return new ResponseEntity<List<QnaBoardView>>(
+                qnaBoardService.getBoardListWithSearch(params),
                 HttpStatus.OK);
     }
 
