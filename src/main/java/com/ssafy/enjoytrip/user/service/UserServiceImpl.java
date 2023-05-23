@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String email, String rawPassword) {
         User user = userDao.findByEmail(email);
-
         if (user == null) {
             throw new UserNotFoundException("로그인 실패");
         }

@@ -62,18 +62,19 @@ public class QnaBoardController {
             @ApiImplicitParam(name = "keyword", value = "검색 키워드", example = "다정천사"),
 
     })
-    public ResponseEntity<List<QnaBoardView>> search(
+    public CommonApiResponse<List<QnaBoardView>> search(
             @RequestParam(defaultValue = "") String mode,
-            @RequestParam(defaultValue = "") String keyword
+            @RequestParam(defaultValue = "") String keyword,
+            HttpServletRequest request
     ) {
-        HashMap<String, String> params = new HashMap<String, String>();
-
-        params.put("mode", mode);
-        params.put("keyword", keyword);
-
-        return new ResponseEntity<List<QnaBoardView>>(
-                qnaBoardService.getBoardListWithSearch(params),
-                HttpStatus.OK);
+        List<QnaBoardView> result = new ArrayList<>();
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("mode", mode);
+            params.put("keyword", keyword);
+            result = qnaBoardService.getBoardListWithSearch(params);
+        }
+        return CommonApiResponse.success(result);
     }
 
     @PostMapping
@@ -106,9 +107,12 @@ public class QnaBoardController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
     })
-    public ResponseEntity<String> update(@PathVariable int id, @RequestBody QnaBoardView board) {
-        qnaBoardService.modify(board);
-        return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+    public CommonApiResponse<String> update(@PathVariable int id, @RequestBody QnaBoardView board,
+            HttpServletRequest request) {
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            qnaBoardService.modify(board);
+        }
+        return CommonApiResponse.success("ok");
     }
 
     // 게시글 삭제
