@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -103,5 +105,25 @@ public class UserServiceImpl implements UserService {
         return userDao.findById(id);
     }
 
+    @Override
+    public void saveRefreshToken(int userid, String refreshToken) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", userid);
+        map.put("token", refreshToken);
+        userDao.saveRefreshToken(map);
+    }
+
+    @Override
+    public Object getRefreshToken(int userid) throws Exception {
+        return userDao.getRefreshToken(userid);
+    }
+
+    @Override
+    public void deleteRefreshToken(int userid) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userid", userid);
+        map.put("token", null);
+        userDao.deleteRefreshToken(map);
+    }
 
 }

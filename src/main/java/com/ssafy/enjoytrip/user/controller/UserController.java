@@ -1,6 +1,10 @@
 package com.ssafy.enjoytrip.user.controller;
 
 
+import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.user.dto.User;
 import com.ssafy.enjoytrip.user.dto.request.CreateUserRequest;
@@ -20,6 +24,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import jdk.nashorn.internal.ir.RuntimeNode.Request;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,10 +43,15 @@ public class UserController {
 
     private final UserService userService;
 
+    private static final String SUCCESS = "success";
+    private static final String FAIL = "fail";
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping
     @ApiOperation(value = "회원가입", notes = "이메일, 비밀번호, 닉네임 request를 받아 회원가입합니다.")
@@ -67,11 +78,34 @@ public class UserController {
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인", notes = "이메일, 비밀번호 request를 받아 로그인합니다.")
-    public CommonApiResponse<LoginResponse> login(
-            @RequestBody @Valid LoginRequest request
+    public CommonApiResponse<Map<String, Object>> login(
+            @RequestBody LoginRequest request
     ) {
-        User loginUser = userService.login(request.getEmail(), request.getPassword());
-        return CommonApiResponse.success(new LoginResponse(loginUser.getId()));
+        log.info("request ", request.getEmail());
+        log.info("request2 ", request.getPassword());
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try {
+            User loginUser = userService.login(request.getEmail(), request.getPassword());
+            if (loginUser != null) {
+                String accessToken = jwtService.createAccessToken("userid",
+                        loginUser.getId());// key, data
+                String refreshToken = jwtService.createRefreshToken("userid",
+                        loginUser.getId());// key, data
+                userService.saveRefreshToken(loginUser.getId(), refreshToken);
+                resultMap.put("access-token", accessToken);
+                resultMap.put("refresh-token", refreshToken);
+                resultMap.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            } else {
+                resultMap.put("message", FAIL);
+                status = HttpStatus.ACCEPTED;
+            }
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return CommonApiResponse.success(resultMap);
     }
 
     @GetMapping("/{id}")
@@ -79,10 +113,25 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
-    public CommonApiResponse<User> getUserInfo(@PathVariable("id") int userId) {
-        User userInfo = userService.getUserInfo(userId);
-        userInfo.setPassword("");
-        return CommonApiResponse.success(userInfo);
+    public CommonApiResponse<Map<String, Object>> getUserInfo(@PathVariable("id") int userId,
+            HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            try {
+                User user = userService.getUserInfo(userId);
+                resultMap.put("userInfo", user);
+                resultMap.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        } else {
+            resultMap.put("message", FAIL);
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return CommonApiResponse.success(resultMap);
     }
 
     @PutMapping("/{id}")
@@ -105,10 +154,40 @@ public class UserController {
         return CommonApiResponse.success("ok");
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout/{id}")
     @ApiOperation(value = "로그아웃", notes = "로그인한 유저 정보를 제거하여 로그아웃합니다.")
-    public CommonApiResponse<String> logout() {
-        return CommonApiResponse.success("ok");
+    public CommonApiResponse<?> logout(@PathVariable("id") int id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            userService.deleteRefreshToken(id);
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return CommonApiResponse.success(resultMap);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody User user,
+            HttpServletRequest request)
+            throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String token = request.getHeader("refresh-token");
+        if (jwtService.checkToken(token)) {
+            if (token.equals(userService.getRefreshToken(user.getId()))) {
+                String accessToken = jwtService.createAccessToken("userid", user.getId());
+                resultMap.put("access-token", accessToken);
+                resultMap.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            }
+        } else {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
     @DeleteMapping("/{id}")

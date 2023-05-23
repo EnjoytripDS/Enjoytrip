@@ -18,12 +18,12 @@ public class GlobalControllerAdvice {
      * 정의되지 않은 Exception 상황
      * 시스템 예외 상황. 모니터링 대상
      */
-    @ResponseStatus
-    @ExceptionHandler(Exception.class)
-    public CommonApiResponse onException(Exception e) {
-        log.error("error = ", e);
-        return CommonApiResponse.fail(ErrorCode.COMMON_SYSTEM_ERROR);
-    }
+//    @ResponseStatus
+//    @ExceptionHandler(Exception.class)
+//    public CommonApiResponse onException(Exception e) {
+//        log.error("error = ", e);
+//        return CommonApiResponse.fail(ErrorCode.COMMON_SYSTEM_ERROR);
+//    }
 
     /**
      * 시스템은 이슈 없고, 비즈니스 로직 처리에서 에러가 발생.
