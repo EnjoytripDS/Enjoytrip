@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.qnaboard.controller;
 
+import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -89,8 +91,13 @@ public class QnaBoardController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
     })
-    public ResponseEntity<QnaBoardView> detail(@PathVariable int id) {
-        return new ResponseEntity<QnaBoardView>(qnaBoardService.readBoardView(id), HttpStatus.OK);
+    public CommonApiResponse<QnaBoardView> detail(@PathVariable int id,
+            HttpServletRequest request) {
+        QnaBoardView qbv = new QnaBoardView();
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            qbv = qnaBoardService.readBoardView(id);
+        }
+        return CommonApiResponse.success(qbv);
     }
 
     // 게시글 수정
@@ -110,10 +117,12 @@ public class QnaBoardController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
     })
-    public ResponseEntity<String> delete(@PathVariable int id) {
-        if (qnaBoardService.remove(id)) {
-            return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+    public CommonApiResponse<String> delete(@PathVariable int id, HttpServletRequest request) {
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            if (!qnaBoardService.remove(id)) {
+                return CommonApiResponse.fail(ErrorCode.QNA_NOT_FOUND);
+            }
         }
-        return new ResponseEntity<String>(FAIL, HttpStatus.NO_CONTENT);
+        return CommonApiResponse.success("ok");
     }
 }
