@@ -30,18 +30,25 @@
 
   <!-- 검색 기능 -->
   <select id="selectAllByCondition" resultMap="attractionMap" parameterType="SearchCondition">
-    select content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, first_image2, readcount, sido_code, gugun_code, latitude, longitude, mlevel
-    from attraction_info
-    where title like concat('%', #{keyword}, '%')
-    <if test="sidoCode != 0">
-      and sido_code = ${sidoCode}
-    </if>
-    <if test="gugunCode != 0">
-      and gugun_code = ${gugunCode}
-    </if>
-    <if test="contentTypeId != 0">
-      and content_type_id = ${contentTypeId}
-    </if>
+    SELECT content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, first_image2, readcount, sido_code, gugun_code, latitude, longitude, mlevel
+    FROM attraction_info
+    <where>
+      <if test="keyword != null">
+        AND title LIKE CONCAT('%', #{keyword}, '%')
+      </if>
+      <if test="sidoCode != 0 and sidoCode != null">
+        AND sido_code = #{sidoCode}
+      </if>
+      <if test="gugunCode != 0 and gugunCode != null">
+        AND gugun_code = #{gugunCode}
+      </if>
+      <if test="contentTypeIdList != null and contentTypeIdList.size() > 0">
+        AND content_type_id IN
+        <foreach item="item" index="index" collection="contentTypeIdList" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
   </select>
 
 </mapper>
