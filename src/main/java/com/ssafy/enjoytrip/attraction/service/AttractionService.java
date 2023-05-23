@@ -10,5 +10,5 @@ public interface AttractionService {
 
     List<Attraction> search(SearchCondition searchCondition);
 
-    List<Attraction> readAttractionDetails(int attractionId);
+    Attraction readAttractionDetails(int attractionId);
 }

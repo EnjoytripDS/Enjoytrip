@@ -26,8 +26,8 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
-    public List<Attraction> readAttractionDetails(int attractionId) {
-        return null;
+    public Attraction readAttractionDetails(int attractionId) {
+        return attractionDao.selectOneById(attractionId);
     }
 
 }
