@@ -169,4 +169,12 @@
         )
   </insert>
 
+  <!-- 게시글 이미지 조회 -->
+  <select id="selectImage" resultMap="boardImageMap" parameterType="int">
+    SELECT image_name, image_url, pathname, filename, size, image_type,
+           date_format(createtime, '%Y-%m-%d %H:%i') as createtime
+    FROM board_image
+    WHERE qna_board_id = #{id}
+  </select>
+
 </mapper>

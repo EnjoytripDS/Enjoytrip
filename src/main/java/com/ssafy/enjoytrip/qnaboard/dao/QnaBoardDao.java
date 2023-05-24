@@ -39,4 +39,6 @@ public interface QnaBoardDao {
     int saveImage(BoardImage boardImage);
 
     int selectLastBoard();
+
+    List<BoardImage> selectImage(int id);
 }

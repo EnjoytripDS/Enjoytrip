@@ -259,4 +259,18 @@ public class QnaBoardController {
         }
         return CommonApiResponse.success("ok");
     }
+
+    @GetMapping("/{id}/image")
+    @ApiOperation(value = "게시글 이미지 조회", notes = "게시글 id에 해당하는 게시글의 이미지 목록을 조회할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
+    public CommonApiResponse<List<BoardImage>> listImage(@PathVariable int id,
+            HttpServletRequest request) {
+        List<BoardImage> result = new ArrayList<>();
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            result = boardImageService.getImage(id);
+        }
+        return CommonApiResponse.success(result);
+    }
 }
