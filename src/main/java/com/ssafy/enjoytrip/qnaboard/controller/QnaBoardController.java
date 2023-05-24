@@ -156,12 +156,13 @@ public class QnaBoardController {
     }
 
     @DeleteMapping("/{id}/comment/{commentId}")
-    @ApiOperation(value = "게시글 삭제", notes = "게시글 id에 해당하는 게시글을 삭제할 수 있습니다.")
+    @ApiOperation(value = "게시글 댓글 삭제", notes = "게시글 id에 해당하는 게시글의 댓글을 삭제할 수 있습니다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "게시글 id", example = "1"),
             @ApiImplicitParam(name = "commentId", value = "댓글 id", example = "1")
     })
-    public CommonApiResponse<String> deleteComment(@PathVariable int id, @PathVariable int commentId,
+    public CommonApiResponse<String> deleteComment(@PathVariable int id,
+            @PathVariable int commentId,
             HttpServletRequest request) {
         BoardComment bc = new BoardComment(commentId, id);
         if (jwtService.checkToken(request.getHeader("access-token"))) {
