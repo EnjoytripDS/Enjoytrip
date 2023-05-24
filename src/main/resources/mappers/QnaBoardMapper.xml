@@ -18,6 +18,7 @@
     <result column="content" property="content"/>
     <result column="createtime" property="createtime"/>
     <result column="nickname" property="nickname"/>
+    <result column="qna_board_id" property="qnaBoardId"/>
   </resultMap>
 
   <insert id="insertBoard" parameterType="QnaBoardView" keyProperty="id" useGeneratedKeys="true">
@@ -102,11 +103,11 @@
   </select>
 
   <!-- 게시글 댓글 조회-->
-  <select id="selectCommentList" resultMap="boardViewMap" parameterType="int">
+  <select id="selectCommentList" resultMap="boardCommentMap" parameterType="int">
     SELECT q.id,
            q.content,
            u.nickname,
-           date_format(q.createtime, '%Y-%m-%d %H:%i') as createtime,
+           date_format(q.createtime, '%Y-%m-%d %H:%i') as createtime
     FROM qna_comment q
            join user u on q.user_id = u.id
     WHERE q.qna_board_id = #{id}
