@@ -2,7 +2,6 @@ package com.ssafy.enjoytrip.trip.dto.request;
 
 import com.ssafy.enjoytrip.trip.dto.Trip;
 import com.ssafy.enjoytrip.trip.dto.TripAttraction;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

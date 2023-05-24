@@ -2,7 +2,6 @@ package com.ssafy.enjoytrip.trip.controller;
 
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.trip.dto.Trip;
-import com.ssafy.enjoytrip.trip.dto.request.CreateTripRequest;
 import com.ssafy.enjoytrip.trip.service.TripService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
