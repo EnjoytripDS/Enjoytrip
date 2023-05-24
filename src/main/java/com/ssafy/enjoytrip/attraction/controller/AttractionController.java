@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.attraction.controller;
 
 import com.ssafy.enjoytrip.attraction.dto.Attraction;
+import com.ssafy.enjoytrip.attraction.dto.Gugun;
 import com.ssafy.enjoytrip.attraction.dto.SearchCondition;
 import com.ssafy.enjoytrip.attraction.service.AttractionService;
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
@@ -31,9 +32,9 @@ public class AttractionController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sidoCode", value = "시/도 코드", example = "1")
     })
-    public CommonApiResponse<List<String>> getGugun(@PathVariable("sidoCode") int sidoCode) {
+    public CommonApiResponse<List<Gugun>> getGugun(@PathVariable("sidoCode") int sidoCode) {
 
-        List<String> gugunList = attractionService.getGugun(sidoCode);
+        List<Gugun> gugunList = attractionService.getGugun(sidoCode);
         return CommonApiResponse.success(gugunList);
     }
 
