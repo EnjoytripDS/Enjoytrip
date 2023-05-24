@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.qnaboard.dao.BoardCommentDao">
+
+  <resultMap type="BoardComment" id="boardCommentMap">
+    <id column="id" property="id"/>
+    <result column="content" property="content"/>
+    <result column="createtime" property="createtime"/>
+    <result column="nickname" property="nickname"/>
+  </resultMap>
+
+  <!-- 게시글 댓글 조회-->
+  <select id="selectCommentList" resultMap="boardViewMap" parameterType="int">
+    SELECT q.id,
+           q.content,
+           u.nickname,
+           date_format(q.createtime, '%Y-%m-%d %H:%i') as createtime,
+    FROM qna_comment q
+           join user u on q.user_id = u.id
+    WHERE q.qna_board_id = #{id}
+  </select>
+
+  <!-- 게시글 댓글 작성 -->
+  <insert id="insertComment" parameterType="BoardComment" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO qna_board (id, content, user_id, qna_board_id)
+    VALUES (#{id}, #{content}, (select id from user where nickname = #{nickname}), #{qnaBoardId})
+  </insert>
+
+</mapper>
