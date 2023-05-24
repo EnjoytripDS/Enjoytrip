@@ -23,8 +23,14 @@
     <result column="overview" property="overview"/>
   </resultMap>
 
-  <select id="getGugun" parameterType="int" resultType="string">
-    select gugun_name
+  <resultMap id="gugunMap" type="Gugun">
+    <result column="gugun_code" property="gugunCode"/>
+    <result column="gugun_name" property="gugunName"/>
+    <result column="sido_code" property="sidoCode"/>
+  </resultMap>
+
+  <select id="getGugun" parameterType="int" resultMap="gugunMap">
+    select gugun_name, gugun_code, sido_code
     from gugun
     where sido_code = #{sidoCode}
   </select>
