@@ -23,7 +23,7 @@ public class TripController {
 
     @PostMapping
     @ApiOperation(value = "여행 생성", notes = "여행을 생성할 수 있습니다.")
-    public CommonApiResponse<String> createTrip(@RequestBody Trip request) { // TODO request로 변경
+    public CommonApiResponse<String> createTrip(@RequestBody Trip request) { // 추후 리팩토링) request로 변경
         tripService.makeTrip(request);
         return CommonApiResponse.success("ok");
     }
