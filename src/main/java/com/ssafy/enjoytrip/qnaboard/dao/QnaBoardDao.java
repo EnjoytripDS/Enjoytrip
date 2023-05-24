@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.qnaboard.dao;
 
+import com.ssafy.enjoytrip.qnaboard.dto.BoardComment;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoard;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
 import java.util.HashMap;
@@ -25,4 +26,12 @@ public interface QnaBoardDao {
     QnaBoardView selectDetailById(int id);
 
     List<QnaBoardView> selectList();
+
+    List<BoardComment> selectCommentList(int id);
+
+    int insertComment(BoardComment boardComment);
+
+    int updateComment(BoardComment boardComment);
+
+    int deleteComment(BoardComment boardComment);
 }

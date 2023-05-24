@@ -3,8 +3,11 @@ package com.ssafy.enjoytrip.qnaboard.controller;
 import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
+import com.ssafy.enjoytrip.qnaboard.dto.BoardComment;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
+import com.ssafy.enjoytrip.qnaboard.dto.request.CreateBoardCommentRequest;
 import com.ssafy.enjoytrip.qnaboard.dto.request.CreateQnaBoardRequest;
+import com.ssafy.enjoytrip.qnaboard.service.BoardCommentService;
 import com.ssafy.enjoytrip.qnaboard.service.QnaBoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -33,16 +36,20 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "Q&A 게시판 API")
 public class QnaBoardController {
 
-    private static final String SUCCESS = "succes";
+    private static final String SUCCESS = "success";
     private static final String FAIL = "fail";
 
     private final QnaBoardService qnaBoardService;
 
+    private final BoardCommentService boardCommentService;
+
     @Autowired
     private JwtService jwtService;
 
-    public QnaBoardController(QnaBoardService qnaBoardService) {
+    public QnaBoardController(QnaBoardService qnaBoardService,
+            BoardCommentService boardCommentService) {
         this.qnaBoardService = qnaBoardService;
+        this.boardCommentService = boardCommentService;
     }
 
     @GetMapping
@@ -99,6 +106,71 @@ public class QnaBoardController {
             qbv = qnaBoardService.readBoardView(id);
         }
         return CommonApiResponse.success(qbv);
+    }
+
+    @GetMapping("/{id}/comment")
+    @ApiOperation(value = "게시글 댓글 조회", notes = "게시글 id에 해당하는 게시글의 댓글 목록을 조회할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
+    public CommonApiResponse<List<BoardComment>> listComment(@PathVariable int id,
+            HttpServletRequest request) {
+        List<BoardComment> result = new ArrayList<>();
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            result = boardCommentService.getCommentList(id);
+        }
+        return CommonApiResponse.success(result);
+    }
+
+    @PostMapping("/{id}/comment")
+    @ApiOperation(value = "게시글 댓글 작성", notes = "게시글 id에 해당하는 게시글에 댓글을 작성합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
+    public CommonApiResponse<String> writeComment(@PathVariable int id,
+            @RequestBody CreateBoardCommentRequest request,
+            HttpServletRequest req) {
+        BoardComment bc = request.toViewDto();
+        bc.setQnaBoardId(id);
+        if (jwtService.checkToken(req.getHeader("access-token"))) {
+            boardCommentService.write(bc);
+        }
+        return CommonApiResponse.success("ok");
+    }
+
+    @PutMapping("/{id}/comment/{commentId}")
+    @ApiOperation(value = "게시글 댓글 수정", notes = "게시글 id에 해당하는 게시글에서 내가 작성한 댓글을 수정할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1"),
+            @ApiImplicitParam(name = "commentId", value = "댓글 id", example = "1")
+    })
+    public CommonApiResponse<String> updateComment(@PathVariable int id,
+            @PathVariable int commentId, @RequestBody BoardComment boardComment,
+            HttpServletRequest request) {
+        boardComment.setQnaBoardId(id);
+        boardComment.setId(commentId);
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            boardCommentService.modify(boardComment);
+        }
+        return CommonApiResponse.success("ok");
+    }
+
+    @DeleteMapping("/{id}/comment/{commentId}")
+    @ApiOperation(value = "게시글 댓글 삭제", notes = "게시글 id에 해당하는 게시글의 댓글을 삭제할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1"),
+            @ApiImplicitParam(name = "commentId", value = "댓글 id", example = "1")
+    })
+    public CommonApiResponse<String> deleteComment(@PathVariable int id,
+            @PathVariable int commentId,
+            HttpServletRequest request) {
+        BoardComment bc = new BoardComment(commentId, id);
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            if (!boardCommentService.remove(bc)) {
+                return CommonApiResponse.fail(ErrorCode.QNA_NOT_FOUND);
+            }
+        }
+        return CommonApiResponse.success("ok");
     }
 
     // 게시글 수정
