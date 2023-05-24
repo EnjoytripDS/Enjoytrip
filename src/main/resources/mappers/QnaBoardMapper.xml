@@ -13,6 +13,13 @@
     <result column="nickname" property="nickname"/>
   </resultMap>
 
+  <resultMap type="BoardComment" id="boardCommentMap">
+    <id column="id" property="id"/>
+    <result column="content" property="content"/>
+    <result column="createtime" property="createtime"/>
+    <result column="nickname" property="nickname"/>
+  </resultMap>
+
   <insert id="insertBoard" parameterType="QnaBoardView" keyProperty="id" useGeneratedKeys="true">
     INSERT INTO qna_board (id, title, user_id, content, hit)
     VALUES (#{id}, #{title}, (select id from user where nickname = #{nickname}), #{content}, #{hit})
@@ -93,5 +100,39 @@
     FROM qna_board q
            join user u on q.user_id = u.id;
   </select>
+
+  <!-- 게시글 댓글 조회-->
+  <select id="selectCommentList" resultMap="boardViewMap" parameterType="int">
+    SELECT q.id,
+           q.content,
+           u.nickname,
+           date_format(q.createtime, '%Y-%m-%d %H:%i') as createtime,
+    FROM qna_comment q
+           join user u on q.user_id = u.id
+    WHERE q.qna_board_id = #{id}
+  </select>
+
+  <!-- 게시글 댓글 작성 -->
+  <insert id="insertComment" parameterType="BoardComment" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO qna_comment (id, content, user_id, qna_board_id)
+    VALUES (#{id}, #{content}, (select id from user where nickname = #{nickname}), #{qnaBoardId})
+  </insert>
+
+  <!-- 게시글 댓글 수정 -->
+  <update id="updateComment" parameterType="BoardComment">
+    UPDATE qna_comment
+    SET content      = #{content},
+        user_id    = (select id from user where user.nickname = #{nickname}),
+        content    = #{content},
+        updatetime = now()
+    WHERE id = #{id} and qna_board_id = #{qnaBoardId}
+  </update>
+
+  <!-- 게시글 댓글 삭제 -->
+  <delete id="deleteComment" parameterType="BoardComment">
+    DELETE
+    FROM qna_comment
+    WHERE id = #{id} and qna_board_id = #{qnaBoardId}
+  </delete>
 
 </mapper>
