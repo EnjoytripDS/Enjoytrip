@@ -184,4 +184,11 @@
     WHERE qna_board_id = #{id}
   </delete>
 
+  <!-- 게시글 댓글 전부 삭제 -->
+  <delete id="deleteAllComments" parameterType="int">
+    DELETE
+    FROM qna_comment
+    WHERE qna_board_id = #{id}
+  </delete>
+
 </mapper>
