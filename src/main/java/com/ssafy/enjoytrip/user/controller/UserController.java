@@ -121,20 +121,16 @@ public class UserController {
     public CommonApiResponse<Map<String, Object>> getUserInfo(@PathVariable("id") int userId,
             HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
         if (jwtService.checkToken(request.getHeader("access-token"))) {
             try {
                 User user = userService.getUserInfo(userId);
                 resultMap.put("userInfo", user);
                 resultMap.put("message", SUCCESS);
-                status = HttpStatus.ACCEPTED;
             } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
         } else {
             resultMap.put("message", FAIL);
-            status = HttpStatus.UNAUTHORIZED;
         }
         return CommonApiResponse.success(resultMap);
     }
@@ -145,10 +141,13 @@ public class UserController {
             @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
     public CommonApiResponse<String> modifyUserInfo(@PathVariable("id") int userId,
-            @RequestBody ModifyUserRequest request) {
-        User userInfo = request.toDto();
-        userInfo.setId(userId);
-        userService.modify(userInfo);
+            @RequestBody ModifyUserRequest request,
+            HttpServletRequest req) {
+        if (jwtService.checkToken(req.getHeader("access-token"))) {
+            User userInfo = request.toDto();
+            userInfo.setId(userId);
+            userService.modify(userInfo);
+        }
         return CommonApiResponse.success("ok");
     }
 
