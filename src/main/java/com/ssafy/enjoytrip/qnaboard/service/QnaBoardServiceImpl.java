@@ -27,7 +27,12 @@ public class QnaBoardServiceImpl implements QnaBoardService{
         return qnaBoardDao.insertBoard(board);
     }
 
-//    @Override
+    @Override
+    public int getLastId() {
+        return qnaBoardDao.selectLastBoard();
+    }
+
+    //    @Override
 //    public QnaBoardView getBoard(int id) {
 //        this.updateHit(id);
 //        return qnaBoardDao.selectOneById(id);

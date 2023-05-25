@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.qnaboard.dao;
 
 import com.ssafy.enjoytrip.qnaboard.dto.BoardComment;
+import com.ssafy.enjoytrip.qnaboard.dto.BoardImage;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoard;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
 import java.util.HashMap;
@@ -34,4 +35,10 @@ public interface QnaBoardDao {
     int updateComment(BoardComment boardComment);
 
     int deleteComment(BoardComment boardComment);
+
+    int saveImage(BoardImage boardImage);
+
+    int selectLastBoard();
+
+    List<BoardImage> selectImage(int id);
 }

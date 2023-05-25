@@ -4,23 +4,27 @@ import com.ssafy.enjoytrip.commons.exception.ErrorCode;
 import com.ssafy.enjoytrip.commons.jwt.service.JwtService;
 import com.ssafy.enjoytrip.commons.response.CommonApiResponse;
 import com.ssafy.enjoytrip.qnaboard.dto.BoardComment;
+import com.ssafy.enjoytrip.qnaboard.dto.BoardImage;
 import com.ssafy.enjoytrip.qnaboard.dto.QnaBoardView;
 import com.ssafy.enjoytrip.qnaboard.dto.request.CreateBoardCommentRequest;
 import com.ssafy.enjoytrip.qnaboard.dto.request.CreateQnaBoardRequest;
+import com.ssafy.enjoytrip.qnaboard.exception.ImageNotFoundException;
 import com.ssafy.enjoytrip.qnaboard.service.BoardCommentService;
+import com.ssafy.enjoytrip.qnaboard.service.BoardImageService;
 import com.ssafy.enjoytrip.qnaboard.service.QnaBoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.servlet.http.HttpServlet;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,9 +33,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@Slf4j
 @RequestMapping("api/v1/qna-board")
 @Api(tags = "Q&A 게시판 API")
 public class QnaBoardController {
@@ -43,13 +50,17 @@ public class QnaBoardController {
 
     private final BoardCommentService boardCommentService;
 
+    private final BoardImageService boardImageService;
+
     @Autowired
     private JwtService jwtService;
 
     public QnaBoardController(QnaBoardService qnaBoardService,
-            BoardCommentService boardCommentService) {
+            BoardCommentService boardCommentService,
+            BoardImageService boardImageService) {
         this.qnaBoardService = qnaBoardService;
         this.boardCommentService = boardCommentService;
+        this.boardImageService = boardImageService;
     }
 
     @GetMapping
@@ -86,12 +97,14 @@ public class QnaBoardController {
 
     @PostMapping
     @ApiOperation(value = "게시글 작성", notes = "제목, 글 내용 request를 받아 게시글을 작성할 수 있습니다. 작성자(닉네임)은 로그인한 유저 정보를 가져옵니다.")
-    public CommonApiResponse<String> write(@RequestBody CreateQnaBoardRequest request,
+    public CommonApiResponse<Integer> write(@RequestBody CreateQnaBoardRequest request,
             HttpServletRequest req) {
+        int ret = -1;
         if (jwtService.checkToken(req.getHeader("access-token"))) {
             qnaBoardService.write(request.toViewDto());
+            ret = qnaBoardService.getLastId();
         }
-        return CommonApiResponse.success("ok");
+        return CommonApiResponse.success(ret);
     }
 
     @GetMapping("/{id}")
@@ -200,5 +213,64 @@ public class QnaBoardController {
             }
         }
         return CommonApiResponse.success("ok");
+    }
+
+    @PostMapping("/{id}/image")
+    @ApiOperation(value = "게시글 사진 업로드", notes = "사진 url, 사진 이름을 받아 게시글에 등록할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
+    public CommonApiResponse<String> uploadImage(@PathVariable int id,
+            @RequestParam(value = "uploadFile", required = false) List<MultipartFile> multipartFile,
+            HttpServletRequest req) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new ImageNotFoundException("이미지가 없음");
+        }
+        if (jwtService.checkToken(req.getHeader("access-token"))) {
+            String uploadFilePath = "C:/travelary/image/";
+            for (MultipartFile f : multipartFile) {
+                String prefix = f.getOriginalFilename()
+                        .substring(f.getOriginalFilename().lastIndexOf(".") + 1,
+                                f.getOriginalFilename().length());
+                String fileName = UUID.randomUUID().toString() + "." + prefix;
+                File folder = new File(uploadFilePath);
+                if (!folder.isDirectory()) {
+                    folder.mkdirs();
+                }
+                String pathName = uploadFilePath + fileName;
+                String resourcePathName = "/image/" + fileName;
+                File dest = new File(pathName);
+                try {
+                    f.transferTo(dest);
+                    BoardImage boardImage = new BoardImage();
+                    boardImage.setImageType(f.getContentType());
+                    boardImage.setImageName(f.getOriginalFilename());
+                    boardImage.setFileName(fileName);
+                    boardImage.setPathName(pathName);
+                    boardImage.setSize((int) f.getSize());
+                    boardImage.setImageUrl(resourcePathName);
+                    boardImage.setQnaBoardId(id);
+                    boardImageService.uploadImage(boardImage);
+                } catch (IllegalStateException | IOException e) {
+                    log.info("에러 발생 ㅎㅎ");
+                    return CommonApiResponse.fail(ErrorCode.COMMON_SYSTEM_ERROR);
+                }
+            }
+        }
+        return CommonApiResponse.success("ok");
+    }
+
+    @GetMapping("/{id}/image")
+    @ApiOperation(value = "게시글 이미지 조회", notes = "게시글 id에 해당하는 게시글의 이미지 목록을 조회할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
+    public CommonApiResponse<List<BoardImage>> listImage(@PathVariable int id,
+            HttpServletRequest request) {
+        List<BoardImage> result = new ArrayList<>();
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            result = boardImageService.getImage(id);
+        }
+        return CommonApiResponse.success(result);
     }
 }
