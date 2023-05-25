@@ -36,5 +36,6 @@ public class User {
 
     public User(String password) {
         this.password = password;
+        this.role = 1;
     }
 }

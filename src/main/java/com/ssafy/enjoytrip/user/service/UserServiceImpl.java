@@ -63,11 +63,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public int modifyPwd(int id, String curpwd, String newpwd) {
         User user = userDao.findById(id);
+        User newUserPwd = new User();
         if (!passwordCheck(curpwd, user.getPassword())) {
-            throw new InvalidPasswordException("로그인 실패");
+            throw new InvalidPasswordException("비밀번호 오류");
         }
         String encodedPassword = passwordEncoder.encode(newpwd);
-        User newUserPwd = new User(encodedPassword);
+        newUserPwd.setPassword(encodedPassword);
         newUserPwd.setId(id);
         return userDao.updatePwd(newUserPwd);
     }

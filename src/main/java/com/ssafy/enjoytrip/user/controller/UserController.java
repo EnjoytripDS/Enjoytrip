@@ -151,10 +151,17 @@ public class UserController {
         return CommonApiResponse.success("ok");
     }
 
-    @PutMapping("/password")
+    @PutMapping("/password/{id}")
     @ApiOperation(value = "유저 비밀번호 수정", notes = "유저 id에 해당하는 유저의 비밀번호를 수정할 수 있습니다.")
-    public CommonApiResponse<String> modifyUserPwd(@RequestBody @Valid ModifyPwdRequest request) {
-        userService.modifyPwd(request.getUserId(), request.getCurPwd(), request.getNewPwd());
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
+    })
+    public CommonApiResponse<String> modifyUserPwd(@PathVariable("id") int id,
+            @RequestBody @Valid ModifyPwdRequest request,
+            HttpServletRequest req) {
+        if (jwtService.checkToken(req.getHeader("access-token"))) {
+            userService.modifyPwd(id, request.getCurPwd(), request.getNewPwd());
+        }
         return CommonApiResponse.success("ok");
     }
 

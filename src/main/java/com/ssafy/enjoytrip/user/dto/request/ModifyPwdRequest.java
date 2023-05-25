@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ModifyPwdRequest {
 
-    private int userId;
-
     @NotBlank(message = "비밀번호는 필수 입력사항입니다.")
     private String curPwd;
 
