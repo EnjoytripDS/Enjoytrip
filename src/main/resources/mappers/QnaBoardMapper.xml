@@ -177,4 +177,11 @@
     WHERE qna_board_id = #{id}
   </select>
 
+  <!-- 게시글 이미지 전부 삭제 -->
+  <delete id="deleteAllImages" parameterType="int">
+    DELETE
+    FROM board_image
+    WHERE qna_board_id = #{id}
+  </delete>
+
 </mapper>

@@ -8,4 +8,6 @@ public interface BoardImageService {
     int uploadImage(BoardImage boardImage);
 
     List<BoardImage> getImage(int id);
+
+    int removeAllImages(int id);
 }

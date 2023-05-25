@@ -273,4 +273,17 @@ public class QnaBoardController {
         }
         return CommonApiResponse.success(result);
     }
+
+    @DeleteMapping("/{id}/image")
+    @ApiOperation(value = "해당 게시글 이미지 전부 삭제", notes = "게시글 id에 해당하는 게시글의 이미지 목록을 삭제할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
+    public CommonApiResponse<String> deleteAllImages(@PathVariable int id,
+            HttpServletRequest request) {
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            boardImageService.removeAllImages(id);
+        }
+        return CommonApiResponse.success("ok");
+    }
 }

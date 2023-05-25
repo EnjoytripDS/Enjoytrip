@@ -13,6 +13,7 @@ public class BoardImageServiceImpl implements BoardImageService {
     public BoardImageServiceImpl(QnaBoardDao qnaBoardDao) {
         this.qnaBoardDao = qnaBoardDao;
     }
+
     @Override
     public int uploadImage(BoardImage boardImage) {
         return qnaBoardDao.saveImage(boardImage);
@@ -21,5 +22,9 @@ public class BoardImageServiceImpl implements BoardImageService {
     @Override
     public List<BoardImage> getImage(int id) {
         return qnaBoardDao.selectImage(id);
+    }
+
+    public int removeAllImages(int id) {
+        return qnaBoardDao.deleteAllImages(id);
     }
 }

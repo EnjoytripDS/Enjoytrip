@@ -121,20 +121,16 @@ public class UserController {
     public CommonApiResponse<Map<String, Object>> getUserInfo(@PathVariable("id") int userId,
             HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
         if (jwtService.checkToken(request.getHeader("access-token"))) {
             try {
                 User user = userService.getUserInfo(userId);
                 resultMap.put("userInfo", user);
                 resultMap.put("message", SUCCESS);
-                status = HttpStatus.ACCEPTED;
             } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
         } else {
             resultMap.put("message", FAIL);
-            status = HttpStatus.UNAUTHORIZED;
         }
         return CommonApiResponse.success(resultMap);
     }
@@ -145,17 +141,27 @@ public class UserController {
             @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
     public CommonApiResponse<String> modifyUserInfo(@PathVariable("id") int userId,
-            @RequestBody ModifyUserRequest request) {
-        User userInfo = request.toDto();
-        userInfo.setId(userId);
-        userService.modify(userInfo);
+            @RequestBody ModifyUserRequest request,
+            HttpServletRequest req) {
+        if (jwtService.checkToken(req.getHeader("access-token"))) {
+            User userInfo = request.toDto();
+            userInfo.setId(userId);
+            userService.modify(userInfo);
+        }
         return CommonApiResponse.success("ok");
     }
 
-    @PutMapping("/password")
+    @PutMapping("/password/{id}")
     @ApiOperation(value = "유저 비밀번호 수정", notes = "유저 id에 해당하는 유저의 비밀번호를 수정할 수 있습니다.")
-    public CommonApiResponse<String> modifyUserPwd(@RequestBody @Valid ModifyPwdRequest request) {
-        userService.modifyPwd(request.getUserId(), request.getCurPwd(), request.getNewPwd());
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
+    })
+    public CommonApiResponse<String> modifyUserPwd(@PathVariable("id") int id,
+            @RequestBody @Valid ModifyPwdRequest request,
+            HttpServletRequest req) {
+        if (jwtService.checkToken(req.getHeader("access-token"))) {
+            userService.modifyPwd(id, request.getCurPwd(), request.getNewPwd());
+        }
         return CommonApiResponse.success("ok");
     }
 
@@ -163,14 +169,11 @@ public class UserController {
     @ApiOperation(value = "로그아웃", notes = "로그인한 유저 정보를 제거하여 로그아웃합니다.")
     public CommonApiResponse<?> logout(@PathVariable("id") int id) {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
         try {
             userService.deleteRefreshToken(id);
             resultMap.put("message", SUCCESS);
-            status = HttpStatus.ACCEPTED;
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return CommonApiResponse.success(resultMap);
     }
@@ -180,17 +183,15 @@ public class UserController {
             HttpServletRequest request)
             throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
         String token = request.getHeader("refresh-token");
         if (jwtService.checkToken(token)) {
             if (token.equals(userService.getRefreshToken(user.getId()))) {
                 String accessToken = jwtService.createAccessToken("userid", user.getId());
                 resultMap.put("access-token", accessToken);
                 resultMap.put("message", SUCCESS);
-                status = HttpStatus.ACCEPTED;
             }
         } else {
-            status = HttpStatus.UNAUTHORIZED;
+            log.info("토큰 인증 실패");
         }
         return CommonApiResponse.success(resultMap);
     }
@@ -201,8 +202,11 @@ public class UserController {
             @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
     public CommonApiResponse<String> delete(@PathVariable("id") int userId,
-            @RequestBody String checkPassword) {
-        userService.dropOutById(userId, checkPassword);
+            @RequestBody String checkPassword,
+            HttpServletRequest request) {
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            userService.dropOutById(userId, checkPassword);
+        }
         return CommonApiResponse.success("ok");
     }
 }
