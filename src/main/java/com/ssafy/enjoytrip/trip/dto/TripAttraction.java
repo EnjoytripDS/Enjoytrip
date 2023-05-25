@@ -14,11 +14,12 @@ public class TripAttraction {
     private int contentId;
     private int dayByAttraction;
     private int orderByDay;
+    private int tripId;
 
-
-    public TripAttraction(int contentId, int dayByAttraction, int orderByDay) {
+    public TripAttraction(int contentId, int dayByAttraction, int orderByDay, int tripId) {
         this.contentId = contentId;
         this.dayByAttraction = dayByAttraction;
         this.orderByDay = orderByDay;
+        this.tripId = tripId;
     }
 }

@@ -1,24 +1,28 @@
 package com.ssafy.enjoytrip.trip.dto;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Trip {
+
     private int id;
-    private int firstdate;
-    private int lastdate;
-    private List<TripAttraction> tripAttractionList;
+    private String  firstdate;
+    private String lastdate;
     private String createtime;
     private String updatetime;
+    private ArrayList<TripAttraction> tripAttractionList;
 
-    public Trip(int firstdate, int lastdate, List<TripAttraction> tripAttractionList) {
+    public Trip(String firstdate, String lastdate) {
         this.firstdate = firstdate;
         this.lastdate = lastdate;
-        this.tripAttractionList = tripAttractionList;
     }
 }
