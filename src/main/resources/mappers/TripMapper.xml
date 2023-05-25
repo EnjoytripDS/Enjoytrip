@@ -69,4 +69,15 @@
 <!--  </insert>-->
 
 
+  <insert id="insertTrip" parameterType="Trip">
+    INSERT INTO trip (id, firstdate, lastdate, createtime, updatetime)
+    VALUES (#{id}, #{firstdate}, #{lastdate}, #{createtime}, #{updatetime})
+
+<!--    INSERT INTO trip_attraction (trip_id, attraction_info_content_id, day_by_attraction, order_by_day)-->
+<!--    VALUES-->
+<!--    <foreach collection="tripAttractionList" item="tripAttraction" separator=",">-->
+<!--      (#{id}, #{tripAttraction.contentId}, #{tripAttraction.dayByAttraction}, #{tripAttraction.orderByDay})-->
+<!--    </foreach>-->
+  </insert>
+
 </mapper>

@@ -12,6 +12,8 @@ public interface QnaBoardService {
 
 //    QnaBoardView getBoard(int id);
 
+    int getLastId();
+
     boolean modify(QnaBoardView board);
 
     boolean remove(int id);

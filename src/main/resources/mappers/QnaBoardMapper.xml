@@ -21,10 +21,28 @@
     <result column="qna_board_id" property="qnaBoardId"/>
   </resultMap>
 
+  <resultMap type="BoardImage" id="boardImageMap">
+    <id column="id" property="id"/>
+    <result column="pathname" property="pathName"/>
+    <result column="filename" property="fileName"/>
+    <result column="image_name" property="imageName"/>
+    <result column="size" property="size"/>
+    <result column="image_type" property="imageType"/>
+    <result column="image_url" property="imageUrl"/>
+    <result column="qna_board_id" property="qnaBoardId"/>
+    <result column="createtime" property="createtime"/>
+  </resultMap>
+
   <insert id="insertBoard" parameterType="QnaBoardView" keyProperty="id" useGeneratedKeys="true">
     INSERT INTO qna_board (id, title, user_id, content, hit)
     VALUES (#{id}, #{title}, (select id from user where nickname = #{nickname}), #{content}, #{hit})
   </insert>
+
+  <select id="selectLastBoard" resultType="int">
+    SELECT id
+    FROM qna_board
+    ORDER BY id DESC LIMIT 1
+  </select>
 
   <update id="updateBoard" parameterType="QnaBoardView">
     UPDATE qna_board
@@ -134,5 +152,29 @@
     FROM qna_comment
     WHERE id = #{id} and qna_board_id = #{qnaBoardId}
   </delete>
+
+  <!-- 게시글 이미지 업로드 -->
+  <insert id="saveImage" parameterType="BoardImage" keyProperty="id">
+    INSERT INTO board_image (id, pathname, filename, image_name, size, image_type, image_url, qna_board_id)
+    VALUES
+        (
+         #{id},
+         #{pathName},
+         #{fileName},
+         #{imageName},
+         #{size},
+         #{imageType},
+         #{imageUrl},
+         #{qnaBoardId}
+        )
+  </insert>
+
+  <!-- 게시글 이미지 조회 -->
+  <select id="selectImage" resultMap="boardImageMap" parameterType="int">
+    SELECT image_name, image_url, pathname, filename, size, image_type,
+           date_format(createtime, '%Y-%m-%d %H:%i') as createtime
+    FROM board_image
+    WHERE qna_board_id = #{id}
+  </select>
 
 </mapper>
