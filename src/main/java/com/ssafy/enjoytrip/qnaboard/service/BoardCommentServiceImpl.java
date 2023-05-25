@@ -33,4 +33,8 @@ public class BoardCommentServiceImpl implements BoardCommentService {
         return qnaBoardDao.deleteComment(boardComment) == 1;
     }
 
+    public int removeAllComments(int id) {
+        return qnaBoardDao.deleteAllComments(id);
+    }
+
 }

@@ -12,4 +12,6 @@ public interface BoardCommentService {
     int modify(BoardComment boardComment);
 
     boolean remove(BoardComment boardComment);
+
+    int removeAllComments(int id);
 }

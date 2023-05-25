@@ -286,4 +286,17 @@ public class QnaBoardController {
         }
         return CommonApiResponse.success("ok");
     }
+
+    @DeleteMapping("/{id}/comment")
+    @ApiOperation(value = "해당 게시글 댓글 전부 삭제", notes = "게시글 id에 해당하는 게시글의 댓글 목록을 삭제할 수 있습니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "게시글 id", example = "1")
+    })
+    public CommonApiResponse<String> deleteAllComments(@PathVariable int id,
+            HttpServletRequest request) {
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            boardCommentService.removeAllComments(id);
+        }
+        return CommonApiResponse.success("ok");
+    }
 }
