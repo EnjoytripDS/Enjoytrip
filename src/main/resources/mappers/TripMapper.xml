@@ -7,8 +7,8 @@
   <resultMap id="tripMap" type="Trip">
     <id property="id" column="id" />
     <result property="name" column="name" />
-    <result property="firstdate" column="firstdate" javaType="java.util.Date" jdbcType="DATE"/>
-    <result property="lastdate" column="lastdate" javaType="java.util.Date" jdbcType="DATE"/>
+    <result property="firstdate" column="firstdate" jdbcType="DATE"/>
+    <result property="lastdate" column="lastdate" jdbcType="DATE"/>
     <result property="createtime" column="createtime"/>
     <result property="updatetime" column="updatetime"/>
   </resultMap>
@@ -21,56 +21,7 @@
   </resultMap>
 
 
-<!--  <insert id="insertTrip" parameterMap="tripMap" keyProperty="id" useGeneratedKeys="true">-->
-<!--    INSERT INTO trip (id, firstdate, lastdate, createtime, updatetime)-->
-<!--    VALUES (#{id}, #{firstdate}, #{lastdate}, #{createtime}, #{updatetime})-->
-
-<!--    INSERT INTO trip_attraction (id, trip_id, attraction_info_content_id, day_by_attraction, order_by_day)-->
-<!--    VALUES-->
-<!--    <foreach collection="tripAttractionList" item="tripAttraction" separator=",">-->
-<!--      (#{id}, #{tripAttraction.tripId}, #{tripAttraction.contentId}, #{tripAttraction.dayByAttraction}, #{tripAttraction.orderByDay})-->
-<!--    </foreach>-->
-<!--  </insert>-->
-
-
-<!--  <insert id="insertTrip" parameterType="Trip" keyProperty="id" useGeneratedKeys="true">-->
-<!--    <selectKey keyProperty="id" resultType="int" order="AFTER">-->
-<!--      SELECT LAST_INSERT_ID();-->
-<!--    </selectKey>-->
-<!--    INSERT INTO trip (firstdate, lastdate, createtime, updatetime)-->
-<!--    VALUES (#{firstdate}, #{lastdate}, #{createtime}, #{updatetime});-->
-
-<!--    <foreach collection="tripAttractionList" item="tripAttraction" separator=";">-->
-<!--      INSERT INTO trip_attraction (trip_id, attraction_info_content_id, day_by_attraction, order_by_day)-->
-<!--      VALUES (#{id}, #{tripAttraction.contentId}, #{tripAttraction.dayByAttraction}, #{tripAttraction.orderByDay});-->
-<!--    </foreach>-->
-<!--  </insert>-->
-
-<!--  <insert id="insertTrip" parameterType="Trip" keyProperty="id" useGeneratedKeys="true">-->
-<!--    <selectKey keyProperty="id" resultType="int" order="AFTER">-->
-<!--      SELECT LAST_INSERT_ID();-->
-<!--    </selectKey>-->
-<!--    INSERT INTO trip (firstdate, lastdate, createtime, updatetime)-->
-<!--    VALUES (#{firstdate}, #{lastdate}, #{createtime}, #{updatetime});-->
-
-<!--    <foreach collection="tripAttractionList" item="tripAttraction" index="index" separator=";">-->
-<!--      INSERT INTO trip_attraction (trip_id, attraction_info_content_id, day_by_attraction, order_by_day)-->
-<!--      VALUES (#{id}, #{tripAttraction.contentId}, #{tripAttraction.dayByAttraction}, #{tripAttraction.orderByDay});-->
-<!--    </foreach>-->
-<!--  </insert>-->
-
-<!--  <insert id="insertTrip" parameterMap="tripMap" keyProperty="id" useGeneratedKeys="true">-->
-<!--    INSERT INTO trip (firstdate, lastdate, createtime, updatetime)-->
-<!--    VALUES (#{firstdate}, #{lastdate}, now(), now())-->
-
-<!--    <foreach collection="tripAttractionList" item="tripAttraction" separator=";">-->
-<!--      INSERT INTO trip_attraction (trip_id, attraction_info_content_id, day_by_attraction, order_by_day)-->
-<!--      VALUES (#{id}, #{tripAttraction.contentId}, #{tripAttraction.dayByAttraction}, #{tripAttraction.orderByDay})-->
-<!--    </foreach>-->
-<!--  </insert>-->
-
-
-  <insert id="insertTrip" parameterMap="tripMap"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+  <insert id="insertTrip" parameterType="Trip"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     INSERT INTO trip (firstdate, lastdate, createtime, updatetime, name)
     VALUES (#{firstdate}, #{lastdate}, now(), now(), #{name});
   </insert>

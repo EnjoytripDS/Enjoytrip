@@ -22,11 +22,11 @@ public class TripController {
     }
 
     @PostMapping
-    @ApiOperation(value = "여행 생성", notes = "여행을 생성할 수 있습니다.")
-    public CommonApiResponse<String> createTrip(
+    @ApiOperation(value = "여행 생성", notes = "여행을 생성할 수 있습니다. 반환값은 생성된 여행 id입니다.")
+    public CommonApiResponse<Integer> createTrip(
             @RequestBody Trip request) { // 추후 request로 리팩토링 (시간없어서 dto로 바로 넘겨줌)
-        int tripId = tripService.makeTrip(request);
-        return CommonApiResponse.success("ok");
+        tripService.makeTrip(request);
+        return CommonApiResponse.success(request.getId());
     }
 
 
