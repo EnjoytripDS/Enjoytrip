@@ -6,17 +6,18 @@
 
   <resultMap id="tripMap" type="Trip">
     <id property="id" column="id" />
+    <result property="name" column="name" />
     <result property="firstdate" column="firstdate" javaType="java.util.Date" jdbcType="DATE"/>
     <result property="lastdate" column="lastdate" javaType="java.util.Date" jdbcType="DATE"/>
     <result property="createtime" column="createtime"/>
     <result property="updatetime" column="updatetime"/>
-    <collection property="tripAttractionList" javaType="java.util.ArrayList" ofType="com.ssafy.enjoytrip.trip.dto.TripAttraction">
+  </resultMap>
+  <resultMap id="tripAttractionMap" type="TripAttraction">
       <id property="id" column="id"/>
       <result property="contentId" column="attraction_info_content_id"/>
       <result property="dayByAttraction" column="day_by_attraction"/>
       <result property="orderByDay" column="order_by_day"/>
       <result property="tripId" column="trip_id"/>
-    </collection>
   </resultMap>
 
 
@@ -69,15 +70,20 @@
 <!--  </insert>-->
 
 
-  <insert id="insertTrip" parameterType="Trip">
-    INSERT INTO trip (id, firstdate, lastdate, createtime, updatetime)
-    VALUES (#{id}, #{firstdate}, #{lastdate}, #{createtime}, #{updatetime})
+  <insert id="insertTrip" parameterMap="tripMap"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO trip (id, firstdate, lastdate, createtime, updatetime, name)
+    VALUES (#{id}, #{firstdate}, #{lastdate}, #{createtime}, #{updatetime}, #{name});
 
-<!--    INSERT INTO trip_attraction (trip_id, attraction_info_content_id, day_by_attraction, order_by_day)-->
-<!--    VALUES-->
-<!--    <foreach collection="tripAttractionList" item="tripAttraction" separator=",">-->
-<!--      (#{id}, #{tripAttraction.contentId}, #{tripAttraction.dayByAttraction}, #{tripAttraction.orderByDay})-->
-<!--    </foreach>-->
   </insert>
+
+  <insert id="insertTripAttraction" parameterType="java.util.List">
+    INSERT
+    <foreach collection="tripAttractionList" item="tripAttraction" index="index">
+      INTO trip_attraction (trip_id, attraction_info_content_id, day_by_attraction, order_by_day)
+      VALUES (#{id}, #{tripAttraction.contentId}, #{tripAttraction.dayByAttraction}, #{tripAttraction.orderByDay})
+    </foreach>
+  </insert>
+
+
 
 </mapper>

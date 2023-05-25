@@ -15,11 +15,12 @@ import lombok.Setter;
 public class Trip {
 
     private int id;
+    private String name;
     private String  firstdate;
     private String lastdate;
     private String createtime;
     private String updatetime;
-    private ArrayList<TripAttraction> tripAttractionList;
+
 
     public Trip(String firstdate, String lastdate) {
         this.firstdate = firstdate;
