@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TripDao {
 
-    public void insertTrip(Trip trip);
+    public int insertTrip(Trip trip);
     public void insertTripAttraction(List<TripAttraction> tripAttractionList);
 }
