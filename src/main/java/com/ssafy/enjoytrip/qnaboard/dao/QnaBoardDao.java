@@ -41,4 +41,6 @@ public interface QnaBoardDao {
     int selectLastBoard();
 
     List<BoardImage> selectImage(int id);
+
+    int deleteAllImages(int id);
 }
