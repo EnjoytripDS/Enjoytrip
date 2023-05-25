@@ -163,14 +163,11 @@ public class UserController {
     @ApiOperation(value = "로그아웃", notes = "로그인한 유저 정보를 제거하여 로그아웃합니다.")
     public CommonApiResponse<?> logout(@PathVariable("id") int id) {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
         try {
             userService.deleteRefreshToken(id);
             resultMap.put("message", SUCCESS);
-            status = HttpStatus.ACCEPTED;
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return CommonApiResponse.success(resultMap);
     }
@@ -180,17 +177,15 @@ public class UserController {
             HttpServletRequest request)
             throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
         String token = request.getHeader("refresh-token");
         if (jwtService.checkToken(token)) {
             if (token.equals(userService.getRefreshToken(user.getId()))) {
                 String accessToken = jwtService.createAccessToken("userid", user.getId());
                 resultMap.put("access-token", accessToken);
                 resultMap.put("message", SUCCESS);
-                status = HttpStatus.ACCEPTED;
             }
         } else {
-            status = HttpStatus.UNAUTHORIZED;
+            log.info("토큰 인증 실패");
         }
         return CommonApiResponse.success(resultMap);
     }
@@ -201,8 +196,11 @@ public class UserController {
             @ApiImplicitParam(name = "id", value = "유저 id", example = "4")
     })
     public CommonApiResponse<String> delete(@PathVariable("id") int userId,
-            @RequestBody String checkPassword) {
-        userService.dropOutById(userId, checkPassword);
+            @RequestBody String checkPassword,
+            HttpServletRequest request) {
+        if (jwtService.checkToken(request.getHeader("access-token"))) {
+            userService.dropOutById(userId, checkPassword);
+        }
         return CommonApiResponse.success("ok");
     }
 }
